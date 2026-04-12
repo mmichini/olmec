@@ -1,0 +1,22 @@
+# Olmec Canned Phrases / Soundboard
+# Iconic lines and misc clips the operator can trigger anytime.
+
+- id: the_choice_is_yours
+  text: "The choice is yours, and yours alone."
+  tags: [iconic]
+
+- id: lets_rock
+  text: "Let's rock! It's time for Legends of the Hidden Temple!"
+  tags: [iconic]
+
+- id: olmec_intro
+  text: "I am Olmec, guardian of the Hidden Temple. Who dares approach?"
+  tags: [intro]
+
+- id: good_luck
+  text: "Good luck. You'll need it."
+  tags: [iconic]
+
+- id: purple_parrots
+  text: "Are you a Purple Parrot, or a Blue Barracuda?"
+  tags: [iconic, teams]

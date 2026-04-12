@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olmec Digital Twin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <div id="audio-unlock-prompt" style="display:none; background:#cc4400; color:white; padding:12px 20px; border-radius:8px; cursor:pointer; font-size:16px; text-align:center;" onclick="unlockAudio(); this.style.display='none';">
+            Click here to enable audio
+        </div>
+        <canvas id="olmec-canvas" width="600" height="700"></canvas>
+        <div id="debug-panel">
+            <div class="debug-row">
+                <span class="label">State:</span>
+                <span id="debug-state">--</span>
+            </div>
+            <div class="debug-row">
+                <span class="label">Mic:</span>
+                <span id="debug-listening">Off</span>
+            </div>
+            <div class="debug-row">
+                <span class="label">Amplitude:</span>
+                <span id="debug-amplitude">0.00</span>
+                <div id="amplitude-bar"><div id="amplitude-fill"></div></div>
+            </div>
+            <div class="debug-row">
+                <span class="label">Heard:</span>
+                <span id="debug-stt">--</span>
+            </div>
+            <div class="debug-row">
+                <span class="label">Judgment:</span>
+                <span id="debug-judge">--</span>
+            </div>
+            <div class="debug-row">
+                <span class="label"></span>
+                <span id="debug-expected"></span>
+            </div>
+            <div class="debug-row">
+                <span class="label">Connection:</span>
+                <span id="debug-connection" class="disconnected">Disconnected</span>
+            </div>
+        </div>
+    </div>
+    <script src="olmec.js"></script>
+</body>
+</html>

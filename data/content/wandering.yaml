@@ -1,0 +1,34 @@
+# Olmec Wandering/Barker Clips
+# Played while walking around to attract people.
+
+- id: step_right_up
+  text: "Step right up! Do you have what it takes to enter the Hidden Temple?"
+  tags: [barker]
+
+- id: do_you_dare
+  text: "Do you dare challenge Olmec, the all-knowing?"
+  tags: [barker]
+
+- id: nice_costume
+  text: "Nice costume! But can your brain match your style?"
+  tags: [observation]
+
+- id: the_temple_awaits
+  text: "The temple awaits those who are brave enough to answer!"
+  tags: [barker]
+
+- id: who_will_challenge
+  text: "Who among you will challenge the great Olmec?"
+  tags: [barker]
+
+- id: legends
+  text: "Legends of the Hidden Temple! Come test your knowledge!"
+  tags: [barker]
+
+- id: jello_shots
+  text: "Answer correctly, and the temple gods shall reward you with a jello shot!"
+  tags: [barker, jello]
+
+- id: come_closer
+  text: "Come closer, mortals. Olmec has a question for you."
+  tags: [barker]

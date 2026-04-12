@@ -1,0 +1,26 @@
+# Olmec Response Clips
+# Correct and incorrect responses. These get multiple takes for variety.
+
+correct:
+  - id: correct_well_done
+    text: "That is correct!"
+    takes: 2
+
+  - id: correct_jello
+    text: "Correct! Claim your jello shot, champion!"
+    takes: 2
+
+incorrect:
+  - id: incorrect_not_quite
+    text: "I'm afraid that is not correct."
+    takes: 2
+
+# Correct responses when jello shots are unavailable
+correct_no_jello:
+  - id: correct_no_jello_worthy
+    text: "That is correct! You have proven yourself worthy!"
+    takes: 1
+
+  - id: correct_no_jello_gods
+    text: "Correct! The temple gods smile upon you!"
+    takes: 1

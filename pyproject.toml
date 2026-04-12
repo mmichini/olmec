@@ -1,0 +1,48 @@
+[project]
+name = "olmec"
+version = "0.1.0"
+description = "Interactive Olmec head sculpture for Bay to Breakers — Legends of the Hidden Temple"
+readme = "README.md"
+authors = [
+    { name = "Matt Michini", email = "michini@mytra.ai" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.34.0",
+    "websockets>=14.0",
+    "sounddevice>=0.5.0",
+    "soundfile>=0.13.0",
+    "numpy>=2.0.0",
+    "pydantic-settings>=2.7.0",
+    "aiosqlite>=0.21.0",
+    "python-multipart>=0.0.26",
+    "pyyaml>=6.0.0",
+]
+
+[project.optional-dependencies]
+stt = [
+    "faster-whisper>=1.2.1",
+    "silero-vad>=6.2.1",
+]
+llm = [
+    "llama-cpp-python>=0.3.0",
+    "anthropic>=0.43.0",
+]
+pipeline = [
+    "elevenlabs>=2.42.0",
+    "pedalboard>=0.9.22",
+    "yt-dlp>=2024.0.0",
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.24.0",
+    "httpx>=0.28.0",
+]
+
+[project.scripts]
+olmec = "olmec.main:cli"
+
+[build-system]
+requires = ["uv_build>=0.11.6,<0.12.0"]
+build-backend = "uv_build"

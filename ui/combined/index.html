@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Olmec</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Olmec face — always visible -->
+    <div id="olmec-view">
+        <canvas id="olmec-canvas" width="600" height="700"></canvas>
+        <div id="audio-unlock-prompt" style="display:none" onclick="unlockAudio(); this.style.display='none';">
+            Click here to enable audio
+        </div>
+        <div id="debug-panel">
+            <div class="debug-row">
+                <span class="label">State:</span>
+                <span id="debug-state">--</span>
+            </div>
+            <div class="debug-row">
+                <span class="label">Mic:</span>
+                <span id="debug-listening">Off</span>
+            </div>
+            <div class="debug-row">
+                <span class="label">Amplitude:</span>
+                <span id="debug-amplitude">0.00</span>
+                <div id="amplitude-bar"><div id="amplitude-fill"></div></div>
+            </div>
+            <div class="debug-row">
+                <span class="label">Heard:</span>
+                <span id="debug-stt">--</span>
+            </div>
+            <div class="debug-row">
+                <span class="label">Judgment:</span>
+                <span id="debug-judge">--</span>
+            </div>
+            <div class="debug-row">
+                <span class="label"></span>
+                <span id="debug-expected"></span>
+            </div>
+            <div class="debug-row">
+                <span class="label">Connection:</span>
+                <span id="debug-connection" class="disconnected">Disconnected</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toggle button — always visible -->
+    <button id="panel-toggle" onclick="togglePanel()">CONTROLS</button>
+
+    <!-- Operator panel — slides in from right -->
+    <div id="operator-panel" class="panel-hidden">
+        <div id="panel-content">
+            <header>
+                <h1>OLMEC</h1>
+                <div id="connection-status" class="status disconnected">Disconnected</div>
+                <div id="state-display" class="state">--</div>
+            </header>
+
+            <!-- Mode Toggle -->
+            <section class="mode-toggle">
+                <button id="btn-wandering" class="mode-btn active" onclick="setMode('wandering')">WANDERING</button>
+                <button id="btn-quiz" class="mode-btn" onclick="setMode('quiz')">QUIZ</button>
+            </section>
+
+            <!-- Quiz Controls -->
+            <section id="quiz-controls" class="panel" style="display:none">
+                <button id="btn-next-question" class="btn btn-primary btn-large" onclick="nextQuestion()">
+                    NEXT QUESTION
+                </button>
+                <div id="question-info"></div>
+                <button id="btn-listen" class="btn btn-listen btn-large" onclick="toggleListen()">
+                    LISTEN
+                </button>
+                <div id="stt-result"></div>
+                <div id="auto-judge-result"></div>
+                <div class="judgment-buttons">
+                    <button id="btn-correct" class="btn btn-correct btn-large" onclick="judgeCorrect()">
+                        CORRECT
+                    </button>
+                    <button id="btn-incorrect" class="btn btn-incorrect btn-large" onclick="judgeIncorrect()">
+                        INCORRECT
+                    </button>
+                </div>
+                <div class="slider-group">
+                    <label>Difficulty: <span id="difficulty-value">3</span></label>
+                    <input type="range" id="difficulty-slider" min="1" max="5" value="3"
+                           oninput="setDifficulty(this.value)">
+                </div>
+            </section>
+
+            <!-- Wandering Controls -->
+            <section id="wandering-controls" class="panel">
+                <button class="btn btn-primary btn-large" onclick="playRandomWandering()">
+                    SAY SOMETHING
+                </button>
+                <div id="wandering-clips" class="clip-grid"></div>
+            </section>
+
+            <!-- Canned Phrases -->
+            <section class="panel">
+                <h2>Soundboard</h2>
+                <div id="canned-clips" class="clip-grid"></div>
+            </section>
+
+            <!-- Settings -->
+            <section class="panel settings">
+                <div class="slider-group">
+                    <label>Volume: <span id="volume-value">100</span>%</label>
+                    <input type="range" id="volume-slider" min="0" max="100" value="100"
+                           oninput="setVolume(this.value)">
+                </div>
+                <div class="toggle-group">
+                    <label>
+                        <input type="checkbox" id="jello-toggle" checked onchange="setJelloShots(this.checked)">
+                        Jello Shots Available
+                    </label>
+                </div>
+                <div class="toggle-group">
+                    <label>LLM Mode:</label>
+                    <select id="llm-mode" onchange="setLLMMode(this.value)">
+                        <option value="offline">Offline (Pre-canned)</option>
+                        <option value="local">Local LLM</option>
+                        <option value="cloud">Cloud (Claude + ElevenLabs)</option>
+                    </select>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

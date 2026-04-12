@@ -1,0 +1,143 @@
+# Olmec Trivia Questions
+# This is the source of truth for all question content.
+# Audio clips are generated from the 'question_text' field.
+
+- id: what_ancient_wonder
+  question_text: "What ancient wonder of the world was located in the city of Babylon?"
+  answer: "The Hanging Gardens"
+  accept: ["hanging gardens", "hanging gardens of babylon"]
+  category: history
+  difficulty: 3
+
+- id: greek_god
+  question_text: "In Greek mythology, who is the god of the sea?"
+  answer: "Poseidon"
+  accept: ["poseidon", "neptune"]
+  category: mythology
+  difficulty: 2
+
+- id: egypt_capital
+  question_text: "What is the capital city of Egypt?"
+  answer: "Cairo"
+  accept: ["cairo"]
+  category: geography
+  difficulty: 1
+
+- id: which_explorer
+  question_text: "Which explorer is credited with discovering the Americas in fourteen ninety two?"
+  answer: "Christopher Columbus"
+  accept: ["columbus", "christopher columbus"]
+  category: history
+  difficulty: 1
+
+- id: name_the_river
+  question_text: "Name the longest river in Africa."
+  answer: "The Nile"
+  accept: ["nile", "the nile", "nile river"]
+  category: geography
+  difficulty: 2
+
+- id: great_wall
+  question_text: "Which country built the Great Wall to protect against northern invaders?"
+  answer: "China"
+  accept: ["china"]
+  category: history
+  difficulty: 1
+
+- id: roman_colosseum
+  question_text: "In which city would you find the ancient Colosseum?"
+  answer: "Rome"
+  accept: ["rome", "roma"]
+  category: history
+  difficulty: 1
+
+- id: king_tut
+  question_text: "What young pharaoh's tomb was discovered in nineteen twenty two by Howard Carter?"
+  answer: "King Tutankhamun"
+  accept: ["tutankhamun", "king tut", "tut"]
+  category: history
+  difficulty: 2
+
+- id: zeus_weapon
+  question_text: "In Greek mythology, what weapon does Zeus wield?"
+  answer: "A thunderbolt"
+  accept: ["thunderbolt", "lightning bolt", "lightning"]
+  category: mythology
+  difficulty: 2
+
+- id: largest_ocean
+  question_text: "What is the largest ocean on Earth?"
+  answer: "The Pacific Ocean"
+  accept: ["pacific", "the pacific", "pacific ocean"]
+  category: geography
+  difficulty: 1
+
+- id: aztec_capital
+  question_text: "What was the capital of the Aztec Empire, now modern-day Mexico City?"
+  answer: "Tenochtitlan"
+  accept: ["tenochtitlan"]
+  category: history
+  difficulty: 4
+
+- id: trojan_horse
+  question_text: "According to legend, what did the Greeks hide inside to sneak into the city of Troy?"
+  answer: "A wooden horse"
+  accept: ["wooden horse", "trojan horse", "a horse", "horse"]
+  category: mythology
+  difficulty: 2
+
+- id: sphinx_body
+  question_text: "The Great Sphinx of Giza has the head of a human and the body of what animal?"
+  answer: "A lion"
+  accept: ["lion", "a lion"]
+  category: history
+  difficulty: 2
+
+- id: mount_olympus
+  question_text: "In Greek mythology, what mountain is home to the gods?"
+  answer: "Mount Olympus"
+  accept: ["olympus", "mount olympus", "mt olympus"]
+  category: mythology
+  difficulty: 2
+
+- id: machu_picchu
+  question_text: "What ancient Incan city sits high in the Andes Mountains of Peru?"
+  answer: "Machu Picchu"
+  accept: ["machu picchu"]
+  category: history
+  difficulty: 3
+
+- id: seven_continents
+  question_text: "How many continents are there on Earth?"
+  answer: "Seven"
+  accept: ["seven", "7"]
+  category: geography
+  difficulty: 1
+
+- id: medusa
+  question_text: "In Greek mythology, what creature has snakes for hair and can turn you to stone with a single look?"
+  answer: "Medusa"
+  accept: ["medusa", "a gorgon", "gorgon"]
+  category: mythology
+  difficulty: 2
+
+- id: amazon_river
+  question_text: "What is the largest river by volume in the world, flowing through South America?"
+  answer: "The Amazon River"
+  accept: ["amazon", "the amazon", "amazon river"]
+  category: geography
+  difficulty: 2
+
+- id: cleopatra
+  question_text: "What famous queen was the last active ruler of the Ptolemaic Kingdom of Egypt?"
+  answer: "Cleopatra"
+  accept: ["cleopatra"]
+  category: history
+  difficulty: 3
+
+- id: vikings_discovered
+  question_text: "What group of Norse explorers reached North America roughly five hundred years before Columbus?"
+  answer: "The Vikings"
+  accept: ["vikings", "the vikings", "norse", "norsemen"]
+  category: history
+  difficulty: 3
