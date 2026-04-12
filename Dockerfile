@@ -16,9 +16,13 @@ COPY pyproject.toml uv.lock README.md ./
 COPY src/ src/
 COPY ui/ ui/
 COPY data/ data/
+COPY pipeline/ pipeline/
 
 # Install dependencies including STT for browser mic support
 RUN uv sync --no-dev --frozen --extra stt
+
+# Seed the question database from YAML content files
+RUN uv run python pipeline/seed_db.py
 
 # Cloud mode by default
 ENV OLMEC_MODE=cloud
