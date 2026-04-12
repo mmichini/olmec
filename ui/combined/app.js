@@ -100,10 +100,17 @@ function handleMessage(msg) {
         updateListenButton();
         document.getElementById('debug-listening').textContent = isListening ? 'LISTENING' : 'Off';
         document.getElementById('debug-listening').className = isListening ? 'listening-active' : '';
+        // Start/stop browser mic capture
+        if (isListening) {
+            startBrowserMic();
+        } else {
+            stopBrowserMic();
+        }
 
     } else if (msg.type === 'stt') {
         isListening = false;
         updateListenButton();
+        stopBrowserMic();
         document.getElementById('debug-listening').textContent = 'Off';
         document.getElementById('debug-listening').className = '';
         const el = document.getElementById('stt-result');
@@ -433,6 +440,122 @@ function playAudio(url) {
         console.warn('Audio play blocked — click the page first:', e);
         document.getElementById('audio-unlock-prompt').style.display = 'block';
     });
+}
+
+// --- Browser Mic Capture ---
+let micStream = null;
+let mediaRecorder = null;
+let audioContext = null;
+
+async function startBrowserMic() {
+    try {
+        micStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+                channelCount: 1,
+                sampleRate: 16000,
+                echoCancellation: true,
+                noiseSuppression: true,
+            }
+        });
+
+        audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+        const source = audioContext.createMediaStreamSource(micStream);
+        const processor = audioContext.createScriptProcessor(4096, 1, 1);
+
+        let audioChunks = [];
+        let silenceStart = null;
+        let speechDetected = false;
+        const startTime = Date.now();
+
+        processor.onaudioprocess = (e) => {
+            const data = e.inputBuffer.getChannelData(0);
+            audioChunks.push(new Float32Array(data));
+
+            // Simple energy-based voice activity detection
+            let sum = 0;
+            for (let i = 0; i < data.length; i++) sum += data[i] * data[i];
+            const rms = Math.sqrt(sum / data.length);
+
+            if (rms > 0.01) {
+                speechDetected = true;
+                silenceStart = null;
+            } else if (speechDetected) {
+                if (!silenceStart) silenceStart = Date.now();
+                if (Date.now() - silenceStart > 1500) {
+                    // 1.5s silence after speech — send audio
+                    finishCapture(audioChunks);
+                    return;
+                }
+            }
+
+            // Hard timeout
+            if (Date.now() - startTime > 8000) {
+                finishCapture(audioChunks);
+            }
+        };
+
+        source.connect(processor);
+        processor.connect(audioContext.destination);
+
+        // Store refs for cleanup
+        window._micProcessor = processor;
+        window._micSource = source;
+
+        console.log('Browser mic capture started');
+    } catch (e) {
+        console.error('Mic access denied or unavailable:', e);
+    }
+}
+
+function finishCapture(audioChunks) {
+    stopBrowserMic();
+
+    if (audioChunks.length === 0) return;
+
+    // Concatenate all chunks into one Float32Array
+    const totalLength = audioChunks.reduce((sum, c) => sum + c.length, 0);
+    const audio = new Float32Array(totalLength);
+    let offset = 0;
+    for (const chunk of audioChunks) {
+        audio.set(chunk, offset);
+        offset += chunk.length;
+    }
+
+    // Convert to base64
+    const bytes = new Uint8Array(audio.buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    const b64 = btoa(binary);
+
+    // Send to server
+    send({
+        command: 'browser_audio',
+        audio: b64,
+        sample_rate: 16000,
+    });
+
+    console.log(`Sent ${(audio.length / 16000).toFixed(1)}s of audio to server`);
+}
+
+function stopBrowserMic() {
+    if (window._micProcessor) {
+        window._micProcessor.disconnect();
+        window._micProcessor = null;
+    }
+    if (window._micSource) {
+        window._micSource.disconnect();
+        window._micSource = null;
+    }
+    if (audioContext) {
+        audioContext.close();
+        audioContext = null;
+    }
+    if (micStream) {
+        micStream.getTracks().forEach(t => t.stop());
+        micStream = null;
+    }
 }
 
 // --- Init ---

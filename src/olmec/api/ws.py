@@ -237,12 +237,22 @@ async def handle_ws_message(data: dict[str, Any]) -> None:
                     await state_machine.play_canned(audio_path=audio_path)
 
     elif cmd == "start_listening":
-        await stt_engine.start_listening()
+        # Try local mic first, fall back to waiting for browser audio
+        if stt_engine._check_deps():
+            await stt_engine.start_listening()
+        # Either way, broadcast listening state so browser knows to capture mic
         await manager.broadcast({"type": "listening", "data": {"active": True}})
 
     elif cmd == "stop_listening":
         await stt_engine.stop_listening()
         await manager.broadcast({"type": "listening", "data": {"active": False}})
+
+    elif cmd == "browser_audio":
+        # Receive audio from browser mic (base64-encoded float32 PCM)
+        import base64
+        audio_bytes = base64.b64decode(data["audio"])
+        sample_rate = data.get("sample_rate", 16000)
+        await stt_engine.transcribe_bytes(audio_bytes, sample_rate)
 
     elif cmd == "set_volume":
         from olmec.audio.engine import audio_engine

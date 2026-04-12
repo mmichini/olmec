@@ -97,6 +97,63 @@ class STTEngine:
         """Manually stop recording."""
         self._recording = False
 
+    async def transcribe_bytes(self, audio_bytes: bytes, sample_rate: int = 16000) -> None:
+        """Transcribe raw PCM audio bytes (from browser mic). Runs Whisper in a thread."""
+        loop = asyncio.get_running_loop()
+        await loop.run_in_executor(None, self._transcribe_audio_bytes, audio_bytes, sample_rate)
+
+    def _transcribe_audio_bytes(self, audio_bytes: bytes, sample_rate: int) -> None:
+        """Transcribe raw audio bytes. Runs in a thread."""
+        import numpy as np
+
+        try:
+            self._ensure_whisper()
+        except Exception:
+            logger.exception("Failed to load Whisper model")
+            return
+
+        # Convert bytes to float32 numpy array
+        audio = np.frombuffer(audio_bytes, dtype=np.float32)
+
+        if len(audio) == 0:
+            logger.info("Empty audio received")
+            if self._loop and self._loop.is_running():
+                asyncio.run_coroutine_threadsafe(
+                    bus.publish(STTResultEvent(text="", confidence=0.0)),
+                    self._loop,
+                )
+            return
+
+        # Resample to 16kHz if needed
+        if sample_rate != 16000:
+            from scipy.signal import resample
+            num_samples = int(len(audio) * 16000 / sample_rate)
+            audio = resample(audio, num_samples).astype(np.float32)
+
+        duration = len(audio) / 16000
+        logger.info(f"Received {duration:.1f}s of browser audio, transcribing...")
+
+        try:
+            segments, info = self._whisper_model.transcribe(
+                audio,
+                language="en",
+                beam_size=1,
+                vad_filter=True,  # Let Whisper filter silence from browser audio
+            )
+            text = " ".join(seg.text.strip() for seg in segments).strip()
+            confidence = 1.0 - (info.language_probability if hasattr(info, 'language_probability') else 0.0)
+            logger.info(f"Browser STT: '{text}' (confidence: {confidence:.2f})")
+        except Exception:
+            logger.exception("Whisper transcription failed")
+            text = ""
+            confidence = 0.0
+
+        if self._loop and self._loop.is_running():
+            asyncio.run_coroutine_threadsafe(
+                bus.publish(STTResultEvent(text=text, confidence=confidence)),
+                self._loop,
+            )
+
     def _record_and_transcribe(self) -> None:
         """Record audio, detect end of speech, transcribe. Runs in a thread."""
         import numpy as np
