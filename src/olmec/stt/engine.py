@@ -65,13 +65,20 @@ class STTEngine:
         return self._recording
 
     def _check_deps(self) -> bool:
-        """Check if STT dependencies are available."""
+        """Check if STT dependencies and audio hardware are available."""
         try:
-            import sounddevice  # noqa: F401
+            import sounddevice as sd  # noqa: F401
             import faster_whisper  # noqa: F401
             import silero_vad  # noqa: F401
+            # Check if there's actually a mic available
+            devices = sd.query_devices()
+            has_input = any(d['max_input_channels'] > 0 for d in devices) if devices else False
+            if not has_input:
+                logger.warning("No audio input devices found")
+                return False
             return True
-        except ImportError:
+        except (ImportError, Exception) as e:
+            logger.warning(f"STT not available: {e}")
             return False
 
     async def start_listening(self) -> None:
