@@ -64,27 +64,34 @@ class STTEngine:
     def is_recording(self) -> bool:
         return self._recording
 
-    def _check_deps(self) -> bool:
-        """Check if STT dependencies and audio hardware are available."""
+    def _check_local_mic(self) -> bool:
+        """Check if local mic capture is possible (deps + hardware)."""
         try:
             import sounddevice as sd  # noqa: F401
             import faster_whisper  # noqa: F401
             import silero_vad  # noqa: F401
-            # Check if there's actually a mic available
             devices = sd.query_devices()
             has_input = any(d['max_input_channels'] > 0 for d in devices) if devices else False
             if not has_input:
-                logger.warning("No audio input devices found")
                 return False
             return True
-        except (ImportError, Exception) as e:
-            logger.warning(f"STT not available: {e}")
+        except (ImportError, Exception):
+            return False
+
+    def _check_whisper(self) -> bool:
+        """Check if Whisper is available (for transcribing browser audio)."""
+        try:
+            import faster_whisper  # noqa: F401
+            return True
+        except ImportError:
             return False
 
     async def start_listening(self) -> None:
-        """Begin recording from the microphone. Non-blocking — runs in a thread."""
-        if not self._check_deps():
-            logger.warning("STT dependencies not installed (install with: uv sync --extra stt)")
+        """Begin recording from the local microphone if available.
+        Even if local mic is unavailable, the listening state is broadcast
+        so browsers can capture audio via getUserMedia instead."""
+        if not self._check_local_mic():
+            logger.info("No local mic — waiting for browser audio")
             return
         if self._recording:
             logger.warning("Already recording")

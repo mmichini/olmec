@@ -237,10 +237,9 @@ async def handle_ws_message(data: dict[str, Any]) -> None:
                     await state_machine.play_canned(audio_path=audio_path)
 
     elif cmd == "start_listening":
-        # Try local mic first, fall back to waiting for browser audio
-        if stt_engine._check_deps():
-            await stt_engine.start_listening()
-        # Either way, broadcast listening state so browser knows to capture mic
+        # Try local mic (no-op if unavailable — browser will capture instead)
+        await stt_engine.start_listening()
+        # Always broadcast so browser knows to capture mic
         await manager.broadcast({"type": "listening", "data": {"active": True}})
 
     elif cmd == "stop_listening":
