@@ -71,9 +71,13 @@ function send(data) {
 
 function handleMessage(msg) {
     if (msg.type === 'amplitude') {
-        targetAmplitude = msg.data.rms;
-        document.getElementById('debug-amplitude').textContent = msg.data.rms.toFixed(4);
-        document.getElementById('amplitude-fill').style.width = (msg.data.rms * 100) + '%';
+        // Use local amplitude from Web Audio API if available (better sync)
+        // Fall back to server amplitude only when not playing locally
+        if (!useLocalAmplitude) {
+            targetAmplitude = msg.data.rms;
+        }
+        document.getElementById('debug-amplitude').textContent = targetAmplitude.toFixed(4);
+        document.getElementById('amplitude-fill').style.width = (targetAmplitude * 100) + '%';
 
     } else if (msg.type === 'state') {
         state = msg.data;
@@ -414,9 +418,13 @@ function drawEye(x, y, glow) {
     }
 }
 
-// --- Audio playback ---
+// --- Audio playback with local amplitude analysis ---
 let audioUnlocked = false;
 let currentAudio = null;
+let localAudioCtx = null;
+let localAnalyser = null;
+let amplitudeAnimFrame = null;
+let useLocalAmplitude = false;
 
 function unlockAudio() {
     if (audioUnlocked) return;
@@ -429,17 +437,72 @@ document.addEventListener('click', unlockAudio, { once: true });
 document.addEventListener('touchstart', unlockAudio, { once: true });
 
 function playAudio(url) {
+    stopLocalAmplitude();
     if (currentAudio) {
         currentAudio.pause();
         currentAudio = null;
     }
+
     currentAudio = new Audio(url);
+    currentAudio.crossOrigin = 'anonymous';
+
     currentAudio.play().then(() => {
         document.getElementById('audio-unlock-prompt').style.display = 'none';
+        // Start local amplitude analysis from the playing audio
+        startLocalAmplitude(currentAudio);
     }).catch(e => {
         console.warn('Audio play blocked — click the page first:', e);
         document.getElementById('audio-unlock-prompt').style.display = 'block';
     });
+
+    currentAudio.onended = () => {
+        stopLocalAmplitude();
+    };
+}
+
+function startLocalAmplitude(audioElement) {
+    try {
+        localAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = localAudioCtx.createMediaElementSource(audioElement);
+        localAnalyser = localAudioCtx.createAnalyser();
+        localAnalyser.fftSize = 256;
+        source.connect(localAnalyser);
+        localAnalyser.connect(localAudioCtx.destination);
+        useLocalAmplitude = true;
+
+        const dataArray = new Float32Array(localAnalyser.fftSize);
+
+        function tick() {
+            if (!useLocalAmplitude) return;
+            localAnalyser.getFloatTimeDomainData(dataArray);
+            // Calculate RMS
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) sum += dataArray[i] * dataArray[i];
+            let rms = Math.sqrt(sum / dataArray.length);
+            // Apply gamma curve like the server does
+            rms = Math.pow(rms, 0.6);
+            targetAmplitude = rms;
+            amplitudeAnimFrame = requestAnimationFrame(tick);
+        }
+        tick();
+    } catch (e) {
+        console.warn('Local amplitude analysis failed, using server amplitude:', e);
+        useLocalAmplitude = false;
+    }
+}
+
+function stopLocalAmplitude() {
+    useLocalAmplitude = false;
+    if (amplitudeAnimFrame) {
+        cancelAnimationFrame(amplitudeAnimFrame);
+        amplitudeAnimFrame = null;
+    }
+    if (localAudioCtx) {
+        localAudioCtx.close().catch(() => {});
+        localAudioCtx = null;
+    }
+    localAnalyser = null;
+    targetAmplitude = 0;
 }
 
 // --- Browser Mic Capture ---
