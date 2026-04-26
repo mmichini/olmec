@@ -143,7 +143,8 @@ function handleMessage(msg) {
         document.getElementById('debug-expected').textContent = msg.data.correct ? '' : `Expected: ${msg.data.expected}`;
 
     } else if (msg.type === 'play_audio') {
-        if (msg.data.url) {
+        // Only play in browser if server tells us to (e.g., not on Pi where physical speaker plays)
+        if (msg.data.url && msg.data.play_in_browser !== false) {
             playAudio(msg.data.url);
         }
     }

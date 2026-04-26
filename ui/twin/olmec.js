@@ -72,8 +72,8 @@ function connect() {
                 document.getElementById('debug-stt').textContent = '--';
             }
         } else if (msg.type === 'play_audio') {
-            // Play audio in the browser so remote users can hear it
-            if (msg.data.url) {
+            // Only play in browser if server tells us to (e.g., not on Pi)
+            if (msg.data.url && msg.data.play_in_browser !== false) {
                 playAudio(msg.data.url);
             }
         }

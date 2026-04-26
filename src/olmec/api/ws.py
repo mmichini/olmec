@@ -85,9 +85,14 @@ async def setup_ws_events() -> None:
             url = f"/audio/{rel}"
         except ValueError:
             url = None
+        # On Pi, audio plays through the physical speaker — tell browsers NOT to play
         await manager.broadcast({
             "type": "play_audio",
-            "data": {"url": url, "category": event.category},
+            "data": {
+                "url": url,
+                "category": event.category,
+                "play_in_browser": not settings.is_pi,
+            },
         })
 
     async def on_stt_result(event: STTResultEvent) -> None:
