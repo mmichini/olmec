@@ -160,7 +160,10 @@ function updateOperatorUI() {
     document.getElementById('wandering-controls').style.display = state.mode === 'wandering' ? 'block' : 'none';
 
     const quizState = state.quiz_state;
-    document.getElementById('btn-next-question').disabled = quizState !== 'idle';
+    // Next question is always available — can interrupt to ask a fresh one
+    document.getElementById('btn-next-question').disabled = false;
+    // Repeat is enabled whenever there's a current question
+    document.getElementById('btn-repeat-question').disabled = !state.current_question_id;
     document.getElementById('btn-correct').disabled = quizState !== 'listening' && quizState !== 'judging';
     document.getElementById('btn-incorrect').disabled = quizState !== 'listening' && quizState !== 'judging';
     document.getElementById('btn-listen').disabled = quizState !== 'listening' && quizState !== 'judging';
@@ -206,6 +209,7 @@ function updateListenButton() {
 
 function setMode(mode) { send({ command: 'set_mode', mode }); }
 function nextQuestion() { send({ command: 'next_question' }); }
+function repeatQuestion() { send({ command: 'repeat_question' }); }
 function judgeCorrect() { send({ command: 'judge_correct' }); }
 function judgeIncorrect() { send({ command: 'judge_incorrect' }); }
 

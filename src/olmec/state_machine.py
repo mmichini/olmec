@@ -41,6 +41,7 @@ class OlmecState:
     wandering_state: WanderingState = WanderingState.IDLE
     current_question_id: str | None = None
     current_question_answer: str | None = None
+    current_question_audio: str | None = None
     jello_shots_available: bool = True
     difficulty: int = 3  # 1-5
     llm_mode: str = "offline"  # "offline", "local", "cloud"
@@ -106,18 +107,30 @@ class StateMachine:
     # --- Quiz flow ---
 
     async def ask_question(self, audio_path: str, question_id: str, answer: str) -> None:
-        """Start asking a question."""
+        """Start asking a question. Can interrupt any current state."""
         if self.state.mode != Mode.QUIZ:
             await self.set_mode(Mode.QUIZ)
-        if self.state.quiz_state != QuizState.IDLE:
-            logger.warning(f"Cannot ask question in state {self.state.quiz_state}")
-            return
+
+        # Cancel any pending reveal (don't play it after interrupt)
+        self._pending_reveal_path = None
 
         self.state.current_question_id = question_id
         self.state.current_question_answer = answer
+        self.state.current_question_audio = audio_path
         self._audio_finished_event.clear()
         await self._transition_quiz(QuizState.ASKING)
         await bus.publish(PlayAudioEvent(file_path=audio_path, category="question"))
+
+    async def repeat_question(self) -> None:
+        """Replay the current question's audio."""
+        if not self.state.current_question_audio:
+            logger.warning("No current question to repeat")
+            return
+        # Cancel any pending reveal
+        self._pending_reveal_path = None
+        self._audio_finished_event.clear()
+        await self._transition_quiz(QuizState.ASKING)
+        await bus.publish(PlayAudioEvent(file_path=self.state.current_question_audio, category="question"))
 
     async def judge_correct(self, audio_path: str) -> None:
         """Operator or auto-judge says correct."""

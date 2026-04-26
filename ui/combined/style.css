@@ -244,8 +244,20 @@ header h1 {
 }
 
 .btn-primary { background: #ff4444; color: white; }
+.btn-secondary { background: #555; color: white; }
 .btn-correct { background: #22aa22; color: white; }
 .btn-incorrect { background: #cc2222; color: white; }
+
+.question-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.question-buttons .btn-next-question { flex: 2; }
+.question-buttons .btn-secondary { flex: 1; }
+.question-buttons .btn { margin-bottom: 0; }
+#btn-next-question { flex: 2; }
+#btn-repeat-question { flex: 1; }
 
 .btn-listen { background: #2a5a8a; color: white; }
 .btn-listen.listening {

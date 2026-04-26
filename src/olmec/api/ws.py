@@ -187,6 +187,9 @@ async def handle_ws_message(data: dict[str, Any]) -> None:
             },
         })
 
+    elif cmd == "repeat_question":
+        await state_machine.repeat_question()
+
     elif cmd == "judge_correct":
         # Pick a correct response clip from the DB
         jello = state_machine.state.jello_shots_available

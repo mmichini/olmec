@@ -84,7 +84,9 @@ function updateUI() {
 
     // Quiz button states
     const quizState = state.quiz_state;
-    document.getElementById('btn-next-question').disabled = quizState !== 'idle';
+    // Next question is always available — can interrupt
+    document.getElementById('btn-next-question').disabled = false;
+    document.getElementById('btn-repeat-question').disabled = !state.current_question_id;
     document.getElementById('btn-correct').disabled = quizState !== 'listening' && quizState !== 'judging';
     document.getElementById('btn-incorrect').disabled = quizState !== 'listening' && quizState !== 'judging';
 
@@ -132,6 +134,10 @@ function setMode(mode) {
 function nextQuestion() {
     // Server picks from DB based on current difficulty
     send({ command: 'next_question' });
+}
+
+function repeatQuestion() {
+    send({ command: 'repeat_question' });
 }
 
 function judgeCorrect() {

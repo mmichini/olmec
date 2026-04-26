@@ -122,6 +122,20 @@ header h1 {
     color: white;
 }
 
+.btn-secondary {
+    background: #555;
+    color: white;
+}
+
+.question-buttons {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.question-buttons .btn { margin-bottom: 0; }
+#btn-next-question { flex: 2; }
+#btn-repeat-question { flex: 1; }
+
 .btn-correct {
     background: #22aa22;
     color: white;

@@ -22,9 +22,14 @@
 
         <!-- Quiz Controls -->
         <section id="quiz-controls" class="panel" style="display:none">
-            <button id="btn-next-question" class="btn btn-primary btn-large" onclick="nextQuestion()">
-                NEXT QUESTION
-            </button>
+            <div class="question-buttons">
+                <button id="btn-next-question" class="btn btn-primary btn-large" onclick="nextQuestion()">
+                    NEXT QUESTION
+                </button>
+                <button id="btn-repeat-question" class="btn btn-secondary btn-large" onclick="repeatQuestion()">
+                    REPEAT
+                </button>
+            </div>
             <div id="question-info"></div>
             <button id="btn-listen" class="btn btn-listen btn-large" onclick="toggleListen()">
                 LISTEN
