@@ -72,7 +72,12 @@ class StateMachine:
         self._audio_finished_event.set()
 
         if self.state.mode == Mode.QUIZ and self.state.quiz_state == QuizState.ASKING:
-            await self._transition_quiz(QuizState.LISTENING)
+            # In offline mode, skip mic listening — go straight to JUDGING
+            # so the operator can press CORRECT/INCORRECT manually
+            if self.state.llm_mode == "offline":
+                await self._transition_quiz(QuizState.JUDGING)
+            else:
+                await self._transition_quiz(QuizState.LISTENING)
         elif self.state.mode == Mode.QUIZ and self.state.quiz_state == QuizState.RESPONDING:
             # Check if there's a reveal clip to play after the incorrect response
             if self._pending_reveal_path:
