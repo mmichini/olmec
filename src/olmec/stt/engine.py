@@ -178,16 +178,29 @@ class STTEngine:
         # VAD needs 512-sample chunks at 16kHz
         vad_chunk_size = 512
 
+        # Determine the mic's native sample rate (some mics don't support 16kHz)
+        device_info = sd.query_devices(kind="input")
+        native_rate = int(device_info.get("default_samplerate", 16000))
+        if native_rate != SAMPLE_RATE:
+            logger.info(f"Mic native rate is {native_rate}Hz, will resample to {SAMPLE_RATE}Hz")
+            # Use a chunk size that gives ~32ms at the native rate
+            capture_chunk_size = int(native_rate * 0.032)
+        else:
+            capture_chunk_size = vad_chunk_size
+
         logger.info("Listening...")
 
         try:
             stream = sd.InputStream(
-                samplerate=SAMPLE_RATE,
+                samplerate=native_rate,
                 channels=CHANNELS,
                 dtype=DTYPE,
-                blocksize=vad_chunk_size,
+                blocksize=capture_chunk_size,
             )
             stream.start()
+
+            # Buffer for accumulating samples for VAD (which needs 512 samples at 16kHz)
+            vad_buffer = np.zeros(0, dtype=np.float32)
 
             while self._recording:
                 elapsed = time.monotonic() - record_start
@@ -197,28 +210,46 @@ class STTEngine:
                     logger.info("Hard timeout reached")
                     break
 
-                # Read audio chunk
-                data, overflowed = stream.read(vad_chunk_size)
+                # Read audio chunk at native rate
+                data, overflowed = stream.read(capture_chunk_size)
                 if overflowed:
                     logger.warning("Audio buffer overflow")
 
-                chunk = data.squeeze()  # (512,)
-                audio_chunks.append(chunk.copy())
+                chunk_native = data.squeeze()
+                audio_chunks.append(chunk_native.copy())
 
-                # Run VAD on this chunk
-                chunk_tensor = torch.from_numpy(chunk)
-                speech_prob = self._vad_model(chunk_tensor, SAMPLE_RATE).item()
+                # Resample to 16kHz for VAD if needed
+                if native_rate != SAMPLE_RATE:
+                    from scipy.signal import resample_poly
+                    chunk_16k = resample_poly(chunk_native, SAMPLE_RATE, native_rate).astype(np.float32)
+                else:
+                    chunk_16k = chunk_native
 
-                if speech_prob > 0.5:
-                    speech_detected = True
-                    silence_start = None
-                elif speech_detected:
-                    # Speech was detected before, now silence
-                    if silence_start is None:
-                        silence_start = time.monotonic()
-                    elif time.monotonic() - silence_start > VAD_SILENCE_THRESHOLD_SEC:
-                        logger.info("Silence detected — stopping")
-                        break
+                # Accumulate into VAD buffer and process 512-sample chunks
+                vad_buffer = np.concatenate([vad_buffer, chunk_16k])
+                stop_recording = False
+                while len(vad_buffer) >= vad_chunk_size:
+                    chunk = vad_buffer[:vad_chunk_size]
+                    vad_buffer = vad_buffer[vad_chunk_size:]
+
+                    # Run VAD on this chunk
+                    chunk_tensor = torch.from_numpy(chunk)
+                    speech_prob = self._vad_model(chunk_tensor, SAMPLE_RATE).item()
+
+                    if speech_prob > 0.5:
+                        speech_detected = True
+                        silence_start = None
+                    elif speech_detected:
+                        # Speech was detected before, now silence
+                        if silence_start is None:
+                            silence_start = time.monotonic()
+                        elif time.monotonic() - silence_start > VAD_SILENCE_THRESHOLD_SEC:
+                            logger.info("Silence detected — stopping")
+                            stop_recording = True
+                            break
+
+                if stop_recording:
+                    break
 
             stream.stop()
             stream.close()
@@ -241,6 +272,10 @@ class STTEngine:
 
         # Concatenate audio
         audio = np.concatenate(audio_chunks)
+        # Resample to 16kHz for Whisper if needed
+        if native_rate != SAMPLE_RATE:
+            from scipy.signal import resample_poly
+            audio = resample_poly(audio, SAMPLE_RATE, native_rate).astype(np.float32)
         duration = len(audio) / SAMPLE_RATE
         logger.info(f"Captured {duration:.1f}s of audio, transcribing...")
 

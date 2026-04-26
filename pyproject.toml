@@ -24,6 +24,7 @@ dependencies = [
 stt = [
     "faster-whisper>=1.2.1",
     "silero-vad>=6.2.1",
+    "scipy>=1.14.0",
 ]
 llm = [
     "llama-cpp-python>=0.3.0",
