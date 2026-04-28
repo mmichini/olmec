@@ -113,10 +113,13 @@ class AudioEngine:
                 # Play in chunks for real-time amplitude extraction
                 stream = None
                 if play_speaker:
+                    from olmec.audio.devices import find_device_by_name
+                    output_device = find_device_by_name(settings.audio_output_device, "output")
                     stream = sd.OutputStream(
                         samplerate=samplerate,
                         channels=1,
                         dtype="float32",
+                        device=output_device,
                     )
                     stream.start()
 

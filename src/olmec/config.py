@@ -31,6 +31,10 @@ class Settings(BaseSettings):
 
     # Audio
     voice: str = "olmec-v1"
+    # Audio device selection — match by substring of device name (case insensitive)
+    # Use `python -c "import sounddevice; print(sounddevice.query_devices())"` to list devices
+    audio_input_device: str = ""   # e.g. "USB" to match a USB mic
+    audio_output_device: str = ""  # e.g. "USB" to match a USB speaker
 
     # Server
     host: str = "0.0.0.0"

@@ -1,0 +1,18 @@
+[Unit]
+Description=Olmec interactive sculpture server
+After=network-online.target sound.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=matt
+WorkingDirectory=/home/matt/code/olmec
+EnvironmentFile=/home/matt/code/olmec/.env
+ExecStart=/home/matt/.local/bin/uv run uvicorn olmec.main:app --host 0.0.0.0 --port 8000
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

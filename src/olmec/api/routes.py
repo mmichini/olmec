@@ -77,6 +77,13 @@ async def list_questions():
     }
 
 
+@router.get("/audio/devices")
+async def list_audio_devices():
+    """List available audio input/output devices for debugging device selection."""
+    from olmec.audio.devices import list_devices
+    return {"devices": list_devices()}
+
+
 @router.get("/questions/stats")
 async def question_stats():
     """Get question usage statistics."""

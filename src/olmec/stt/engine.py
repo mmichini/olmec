@@ -179,7 +179,10 @@ class STTEngine:
         vad_chunk_size = 512
 
         # Determine the mic's native sample rate (some mics don't support 16kHz)
-        device_info = sd.query_devices(kind="input")
+        from olmec.audio.devices import find_device_by_name
+        from olmec.config import settings
+        input_device = find_device_by_name(settings.audio_input_device, "input")
+        device_info = sd.query_devices(input_device, kind="input") if input_device is not None else sd.query_devices(kind="input")
         native_rate = int(device_info.get("default_samplerate", 16000))
         if native_rate != SAMPLE_RATE:
             logger.info(f"Mic native rate is {native_rate}Hz, will resample to {SAMPLE_RATE}Hz")
@@ -196,6 +199,7 @@ class STTEngine:
                 channels=CHANNELS,
                 dtype=DTYPE,
                 blocksize=capture_chunk_size,
+                device=input_device,
             )
             stream.start()
 
