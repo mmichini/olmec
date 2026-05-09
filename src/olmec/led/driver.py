@@ -1,4 +1,4 @@
-"""LED driver abstraction. Uses GPIO PWM on Pi, mock on macOS."""
+"""LED driver abstraction. WS2812B addressable strip on Pi, mock on macOS."""
 
 import logging
 from abc import ABC, abstractmethod
@@ -8,14 +8,48 @@ from olmec.events import AmplitudeEvent, bus
 
 logger = logging.getLogger(__name__)
 
+# Default eye color — classic red
+DEFAULT_COLOR: tuple[int, int, int] = (255, 0, 0)
+
 
 class LEDDriver(ABC):
-    """Abstract LED driver."""
+    """Abstract LED driver.
+
+    Tracks an overall color, brightness, and per-eye colors.
+    Subclasses implement `_apply()` to push the state to the physical LEDs.
+    """
+
+    def __init__(self):
+        self._color: tuple[int, int, int] = DEFAULT_COLOR
+        self._brightness: float = 0.0
+        self._eye_colors: list[tuple[int, int, int]] = [DEFAULT_COLOR, DEFAULT_COLOR]
 
     @abstractmethod
-    async def set_brightness(self, brightness: float) -> None:
-        """Set LED brightness (0.0 to 1.0)."""
+    async def _apply(self) -> None:
+        """Push the current color/brightness/eye state to the physical LEDs."""
         ...
+
+    async def set_brightness(self, brightness: float) -> None:
+        """Set overall brightness (0.0 to 1.0). Driven by audio amplitude."""
+        self._brightness = max(0.0, min(1.0, brightness))
+        await self._apply()
+
+    async def set_color(self, color: tuple[int, int, int]) -> None:
+        """Set all LEDs to a single color."""
+        self._color = color
+        self._eye_colors = [color, color]
+        await self._apply()
+
+    async def set_eye_color(self, eye: int, color: tuple[int, int, int]) -> None:
+        """Set just one eye's color (eye=0 or eye=1)."""
+        if 0 <= eye < len(self._eye_colors):
+            self._eye_colors[eye] = color
+            await self._apply()
+
+    async def clear(self) -> None:
+        """Turn all LEDs off."""
+        self._brightness = 0.0
+        await self._apply()
 
     async def start(self) -> None:
         """Register for amplitude events."""
@@ -25,7 +59,7 @@ class LEDDriver(ABC):
     async def stop(self) -> None:
         """Clean up."""
         bus.unsubscribe(AmplitudeEvent, self._on_amplitude)
-        await self.set_brightness(0.0)
+        await self.clear()
         logger.info(f"{self.__class__.__name__} stopped")
 
     async def _on_amplitude(self, event: AmplitudeEvent) -> None:
@@ -36,11 +70,10 @@ class MockLEDDriver(LEDDriver):
     """Mock LED driver for macOS development. Logs brightness changes."""
 
     def __init__(self):
-        self._brightness: float = 0.0
+        super().__init__()
         self._callback = None
 
-    async def set_brightness(self, brightness: float) -> None:
-        self._brightness = max(0.0, min(1.0, brightness))
+    async def _apply(self) -> None:
         if self._callback:
             await self._callback(self._brightness)
 
@@ -49,35 +82,76 @@ class MockLEDDriver(LEDDriver):
         self._callback = callback
 
 
-class PiLEDDriver(LEDDriver):
-    """Raspberry Pi LED driver using GPIO PWM."""
+class NeoPixelLEDDriver(LEDDriver):
+    """Raspberry Pi LED driver using WS2812B addressable strip via SPI.
 
-    def __init__(self, pin: int = 18):
-        self._pin = pin
-        self._pwm = None
+    Layout: 80 LEDs total, daisy-chained.
+      - LEDs  0-39: eye 0 (rows 1-2)
+      - LEDs 40-79: eye 1 (rows 1-2)
+
+    Wiring: data line on GPIO 10 (SPI0 MOSI, physical pin 19) through a
+    330Ω resistor to the strip's DI pad. 5V power from a separate buck
+    converter — NOT the Pi's 5V rail. Common ground.
+    """
+
+    NUM_PIXELS = 80
+    EYE0_RANGE = range(0, 40)
+    EYE1_RANGE = range(40, 80)
+    MAX_HARDWARE_BRIGHTNESS = 0.6  # safety cap to limit current draw
+
+    def __init__(self):
+        super().__init__()
+        self._pixels = None
 
     async def start(self) -> None:
         try:
-            from gpiozero import PWMLED
-            self._pwm = PWMLED(self._pin)
-            logger.info(f"GPIO PWM LED initialized on pin {self._pin}")
-        except ImportError:
-            logger.error("gpiozero not available — falling back to mock")
+            import board
+            import neopixel_spi as neopixel
+            spi = board.SPI()
+            self._pixels = neopixel.NeoPixel_SPI(
+                spi,
+                self.NUM_PIXELS,
+                pixel_order=neopixel.GRB,
+                brightness=self.MAX_HARDWARE_BRIGHTNESS,
+                auto_write=False,
+            )
+            logger.info(f"NeoPixel SPI initialized ({self.NUM_PIXELS} LEDs)")
+        except Exception:
+            logger.exception("NeoPixel SPI init failed — falling back to mock")
             return
         await super().start()
 
-    async def set_brightness(self, brightness: float) -> None:
-        if self._pwm:
-            self._pwm.value = max(0.0, min(1.0, brightness))
+    async def _apply(self) -> None:
+        if not self._pixels:
+            return
+        # Scale color by current brightness (smoother than using strip brightness)
+        eye0 = _scale(self._eye_colors[0], self._brightness)
+        eye1 = _scale(self._eye_colors[1], self._brightness)
+        for i in self.EYE0_RANGE:
+            self._pixels[i] = eye0
+        for i in self.EYE1_RANGE:
+            self._pixels[i] = eye1
+        self._pixels.show()
 
     async def stop(self) -> None:
         await super().stop()
-        if self._pwm:
-            self._pwm.close()
+        if self._pixels:
+            self._pixels.fill((0, 0, 0))
+            self._pixels.show()
+            self._pixels = None
+
+
+def _scale(color: tuple[int, int, int], factor: float) -> tuple[int, int, int]:
+    """Scale an RGB color by a 0.0-1.0 brightness factor."""
+    return (
+        int(color[0] * factor),
+        int(color[1] * factor),
+        int(color[2] * factor),
+    )
 
 
 def create_led_driver() -> LEDDriver:
     """Factory: returns the appropriate LED driver for the current platform."""
     if settings.is_pi:
-        return PiLEDDriver()
+        return NeoPixelLEDDriver()
     return MockLEDDriver()
