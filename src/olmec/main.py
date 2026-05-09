@@ -13,6 +13,7 @@ from olmec.api.ws import handle_ws_message, manager, setup_ws_events
 from olmec.audio.engine import audio_engine
 from olmec.config import settings
 from olmec.led.driver import create_led_driver
+from olmec.led.patterns import PatternRunner
 from olmec.questions.db import question_db
 from olmec.state_machine import state_machine
 from olmec.stt.engine import stt_engine
@@ -42,13 +43,15 @@ async def lifespan(app: FastAPI):
     await stt_engine.start()
     await setup_ws_events()
 
-    # Store LED driver on app for access
+    # Store LED driver + pattern runner on app for access
     app.state.led_driver = led_driver
+    app.state.pattern_runner = PatternRunner(led_driver)
 
     logger.info("Olmec is ready")
     yield
 
     # Shutdown
+    await app.state.pattern_runner.stop()
     await stt_engine.stop()
     await state_machine.stop()
     await led_driver.stop()
@@ -70,7 +73,7 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             data = await websocket.receive_json()
-            await handle_ws_message(data)
+            await handle_ws_message(data, app)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
 
@@ -81,6 +84,11 @@ if _UI_DIR.exists():
     combined_dir = _UI_DIR / "combined"
     if combined_dir.exists():
         app.mount("/olmec", StaticFiles(directory=str(combined_dir), html=True), name="combined")
+
+    # LED test page
+    leds_dir = _UI_DIR / "leds"
+    if leds_dir.exists():
+        app.mount("/leds", StaticFiles(directory=str(leds_dir), html=True), name="leds")
 
     # Standalone operator UI (for phone use at the festival)
     operator_dir = _UI_DIR / "operator"

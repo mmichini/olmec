@@ -23,6 +23,8 @@ class LEDDriver(ABC):
         self._color: tuple[int, int, int] = DEFAULT_COLOR
         self._brightness: float = 0.0
         self._eye_colors: list[tuple[int, int, int]] = [DEFAULT_COLOR, DEFAULT_COLOR]
+        # When True, amplitude events are ignored — for manual LED testing
+        self._test_mode: bool = False
 
     @abstractmethod
     async def _apply(self) -> None:
@@ -63,7 +65,26 @@ class LEDDriver(ABC):
         logger.info(f"{self.__class__.__name__} stopped")
 
     async def _on_amplitude(self, event: AmplitudeEvent) -> None:
+        if self._test_mode:
+            return
         await self.set_brightness(event.rms)
+
+    @property
+    def is_test_mode(self) -> bool:
+        return self._test_mode
+
+    def set_test_mode(self, enabled: bool) -> None:
+        """Toggle test mode (when enabled, ignores amplitude events)."""
+        self._test_mode = enabled
+
+    @property
+    def state(self) -> dict:
+        """Current driver state — for the test UI."""
+        return {
+            "test_mode": self._test_mode,
+            "brightness": round(self._brightness, 3),
+            "eye_colors": [list(c) for c in self._eye_colors],
+        }
 
 
 class MockLEDDriver(LEDDriver):

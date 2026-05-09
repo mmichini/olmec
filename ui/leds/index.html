@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olmec LED Test</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <header>
+            <h1>LED TEST</h1>
+            <div id="connection-status" class="status disconnected">Disconnected</div>
+        </header>
+
+        <!-- Test mode toggle -->
+        <section class="panel">
+            <div class="row">
+                <label class="big-toggle">
+                    <input type="checkbox" id="test-mode-toggle" onchange="setTestMode(this.checked)">
+                    <span>Test Mode (ignore audio amplitude)</span>
+                </label>
+            </div>
+            <p class="hint">Turn on Test Mode so audio playback doesn't override your manual settings.</p>
+        </section>
+
+        <!-- Brightness -->
+        <section class="panel">
+            <h2>Brightness</h2>
+            <div class="slider-group">
+                <input type="range" id="brightness-slider" min="0" max="100" value="0"
+                       oninput="setBrightness(this.value)">
+                <div class="slider-value"><span id="brightness-value">0</span>%</div>
+            </div>
+            <div class="quick-buttons">
+                <button class="btn" onclick="setBrightnessQuick(0)">Off</button>
+                <button class="btn" onclick="setBrightnessQuick(25)">25%</button>
+                <button class="btn" onclick="setBrightnessQuick(50)">50%</button>
+                <button class="btn" onclick="setBrightnessQuick(75)">75%</button>
+                <button class="btn" onclick="setBrightnessQuick(100)">Full</button>
+            </div>
+        </section>
+
+        <!-- Both eyes color -->
+        <section class="panel">
+            <h2>Both Eyes Color</h2>
+            <div class="color-grid">
+                <button class="color-btn" style="background:#ff0000" onclick="setColor([255,0,0])">Red</button>
+                <button class="color-btn" style="background:#ff8800" onclick="setColor([255,136,0])">Orange</button>
+                <button class="color-btn" style="background:#ffff00; color:#000" onclick="setColor([255,255,0])">Yellow</button>
+                <button class="color-btn" style="background:#00ff00; color:#000" onclick="setColor([0,255,0])">Green</button>
+                <button class="color-btn" style="background:#00ffff; color:#000" onclick="setColor([0,255,255])">Cyan</button>
+                <button class="color-btn" style="background:#0000ff" onclick="setColor([0,0,255])">Blue</button>
+                <button class="color-btn" style="background:#ff00ff" onclick="setColor([255,0,255])">Magenta</button>
+                <button class="color-btn" style="background:#ffffff; color:#000" onclick="setColor([255,255,255])">White</button>
+            </div>
+            <div class="row">
+                <label>Custom: <input type="color" id="custom-color" value="#ff0000" oninput="setCustomColor()"></label>
+            </div>
+        </section>
+
+        <!-- Per-eye control -->
+        <section class="panel">
+            <h2>Individual Eyes</h2>
+            <div class="eye-row">
+                <div class="eye-block">
+                    <h3>Left Eye (0)</h3>
+                    <div class="color-grid small">
+                        <button class="color-btn" style="background:#ff0000" onclick="setEye(0,[255,0,0])">R</button>
+                        <button class="color-btn" style="background:#00ff00; color:#000" onclick="setEye(0,[0,255,0])">G</button>
+                        <button class="color-btn" style="background:#0000ff" onclick="setEye(0,[0,0,255])">B</button>
+                        <button class="color-btn" style="background:#ffffff; color:#000" onclick="setEye(0,[255,255,255])">W</button>
+                        <button class="color-btn" style="background:#000; color:#fff; border:1px solid #444" onclick="setEye(0,[0,0,0])">Off</button>
+                    </div>
+                    <input type="color" value="#ff0000" oninput="setEyeColor(0, this.value)">
+                </div>
+                <div class="eye-block">
+                    <h3>Right Eye (1)</h3>
+                    <div class="color-grid small">
+                        <button class="color-btn" style="background:#ff0000" onclick="setEye(1,[255,0,0])">R</button>
+                        <button class="color-btn" style="background:#00ff00; color:#000" onclick="setEye(1,[0,255,0])">G</button>
+                        <button class="color-btn" style="background:#0000ff" onclick="setEye(1,[0,0,255])">B</button>
+                        <button class="color-btn" style="background:#ffffff; color:#000" onclick="setEye(1,[255,255,255])">W</button>
+                        <button class="color-btn" style="background:#000; color:#fff; border:1px solid #444" onclick="setEye(1,[0,0,0])">Off</button>
+                    </div>
+                    <input type="color" value="#ff0000" oninput="setEyeColor(1, this.value)">
+                </div>
+            </div>
+        </section>
+
+        <!-- Patterns -->
+        <section class="panel">
+            <h2>Animations</h2>
+            <div class="pattern-grid">
+                <button class="btn" onclick="runPattern('pulse')">Pulse</button>
+                <button class="btn" onclick="runPattern('blink')">Blink</button>
+                <button class="btn" onclick="runPattern('heartbeat')">Heartbeat</button>
+                <button class="btn" onclick="runPattern('alternate_eyes')">Alt Eyes</button>
+                <button class="btn" onclick="runPattern('rainbow')">Rainbow</button>
+                <button class="btn" onclick="runPattern('rainbow_eyes')">Rainbow Eyes</button>
+                <button class="btn" onclick="runPattern('fade_in')">Fade In</button>
+                <button class="btn btn-stop" onclick="stopPattern()">⏹ Stop</button>
+            </div>
+        </section>
+
+        <!-- Status / Quick Actions -->
+        <section class="panel status-panel">
+            <h2>Status</h2>
+            <div class="status-grid">
+                <div><span class="label">Test Mode:</span> <span id="status-test-mode">--</span></div>
+                <div><span class="label">Brightness:</span> <span id="status-brightness">--</span></div>
+                <div><span class="label">Eye 0:</span> <span class="color-swatch" id="status-eye0"></span></div>
+                <div><span class="label">Eye 1:</span> <span class="color-swatch" id="status-eye1"></span></div>
+                <div><span class="label">Pattern:</span> <span id="status-pattern">--</span></div>
+            </div>
+            <button class="btn btn-clear" onclick="clearAll()">CLEAR (off)</button>
+        </section>
+
+        <p class="hint">Tip: turn off Test Mode to return to normal audio-driven behavior.</p>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>

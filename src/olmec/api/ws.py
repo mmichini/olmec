@@ -151,7 +151,7 @@ def _resolve_audio_path(relative_path: str) -> str:
     return str(resolved)
 
 
-async def handle_ws_message(data: dict[str, Any]) -> None:
+async def handle_ws_message(data: dict[str, Any], app=None) -> None:
     """Process an incoming WebSocket command from the operator UI."""
     cmd = data.get("command")
 
@@ -277,6 +277,54 @@ async def handle_ws_message(data: dict[str, Any]) -> None:
     elif cmd == "set_llm_mode":
         state_machine.state.llm_mode = data["llm_mode"]
         await manager.broadcast({"type": "state", "data": state_machine.to_dict()})
+
+    # --- LED test commands (require app reference for driver/runner) ---
+    elif cmd in ("led_set_color", "led_set_eye_color", "led_set_brightness",
+                 "led_clear", "led_test_mode", "led_pattern", "led_pattern_stop", "led_state"):
+        if app is None:
+            logger.warning("LED command received but no app reference")
+            return
+        led = app.state.led_driver
+        runner = app.state.pattern_runner
+
+        if cmd == "led_set_color":
+            await runner.stop()
+            led.set_test_mode(True)
+            await led.set_color(tuple(data["color"]))
+
+        elif cmd == "led_set_eye_color":
+            await runner.stop()
+            led.set_test_mode(True)
+            await led.set_eye_color(int(data["eye"]), tuple(data["color"]))
+
+        elif cmd == "led_set_brightness":
+            await runner.stop()
+            led.set_test_mode(True)
+            await led.set_brightness(float(data["brightness"]))
+
+        elif cmd == "led_clear":
+            await runner.stop()
+            led.set_test_mode(True)
+            await led.clear()
+
+        elif cmd == "led_test_mode":
+            enabled = bool(data["enabled"])
+            if not enabled:
+                await runner.stop()
+            led.set_test_mode(enabled)
+
+        elif cmd == "led_pattern":
+            await runner.start(data["name"], **data.get("kwargs", {}))
+
+        elif cmd == "led_pattern_stop":
+            await runner.stop()
+            led.set_test_mode(False)
+
+        # Always broadcast LED state after any LED command
+        await manager.broadcast({
+            "type": "led_state",
+            "data": {**led.state, "pattern_running": runner.is_running},
+        })
 
     else:
         logger.warning(f"Unknown WebSocket command: {cmd}")
