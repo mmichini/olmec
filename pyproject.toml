@@ -28,6 +28,7 @@ stt = [
 ]
 pi = [
     "adafruit-circuitpython-neopixel-spi>=1.0.0",
+    "lgpio>=0.2.2",
 ]
 llm = [
     "llama-cpp-python>=0.3.0",
