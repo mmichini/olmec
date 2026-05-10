@@ -123,6 +123,7 @@ class NeoPixelLEDDriver(LEDDriver):
     def __init__(self):
         super().__init__()
         self._pixels = None
+        self._refresh_task = None
 
     async def start(self) -> None:
         try:
@@ -141,6 +142,22 @@ class NeoPixelLEDDriver(LEDDriver):
             logger.exception("NeoPixel SPI init failed — falling back to mock")
             return
         await super().start()
+        # Start the keep-alive refresh task to prevent pixel drift
+        import asyncio
+        self._refresh_task = asyncio.create_task(self._keepalive_loop())
+
+    async def _keepalive_loop(self) -> None:
+        """Periodically re-send the current state so pixels don't drift from noise."""
+        import asyncio
+        while self._pixels is not None:
+            try:
+                await asyncio.sleep(0.1)  # 10 Hz
+                if self._pixels is not None:
+                    await self._apply()
+            except asyncio.CancelledError:
+                break
+            except Exception:
+                logger.exception("Keep-alive refresh error")
 
     async def _apply(self) -> None:
         if not self._pixels:
@@ -155,6 +172,14 @@ class NeoPixelLEDDriver(LEDDriver):
         self._pixels.show()
 
     async def stop(self) -> None:
+        # Cancel keep-alive first so it doesn't try to draw to a closed strip
+        task = getattr(self, "_refresh_task", None)
+        if task:
+            task.cancel()
+            try:
+                await task
+            except (Exception, BaseException):
+                pass
         await super().stop()
         if self._pixels:
             self._pixels.fill((0, 0, 0))
