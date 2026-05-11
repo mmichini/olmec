@@ -201,26 +201,34 @@ async def handle_ws_message(data: dict[str, Any], app=None) -> None:
         if clip:
             audio_path = resolve_audio_path(clip.id, "responses", clip.takes)
             if audio_path:
-                # Record stats
-                if state_machine.state.current_question_id:
-                    question_db.record_asked(state_machine.state.current_question_id, correct=True)
-                await state_machine.judge_correct(audio_path=audio_path)
+                # If we're in the right state, do the full judgment flow + stats
+                if state_machine.state.quiz_state in (QuizState.LISTENING, QuizState.JUDGING):
+                    if state_machine.state.current_question_id:
+                        question_db.record_asked(state_machine.state.current_question_id, correct=True)
+                    await state_machine.judge_correct(audio_path=audio_path)
+                else:
+                    # Standalone press — just play the clip
+                    await state_machine.play_canned(audio_path=audio_path)
 
     elif cmd == "judge_incorrect":
         clip = question_db.get_random_clip("incorrect")
         if clip:
             audio_path = resolve_audio_path(clip.id, "responses", clip.takes)
             if audio_path:
-                if state_machine.state.current_question_id:
-                    question_db.record_asked(state_machine.state.current_question_id, correct=False)
-                # Try to find a reveal clip for this question
-                reveal_path = resolve_audio_path(
-                    f"reveal_{state_machine.state.current_question_id}", "reveals"
-                ) if state_machine.state.current_question_id else None
-                await state_machine.judge_incorrect(
-                    audio_path=audio_path,
-                    reveal_audio_path=reveal_path or None,
-                )
+                # If we're in the right state, do the full judgment flow + stats + reveal
+                if state_machine.state.quiz_state in (QuizState.LISTENING, QuizState.JUDGING):
+                    if state_machine.state.current_question_id:
+                        question_db.record_asked(state_machine.state.current_question_id, correct=False)
+                    reveal_path = resolve_audio_path(
+                        f"reveal_{state_machine.state.current_question_id}", "reveals"
+                    ) if state_machine.state.current_question_id else None
+                    await state_machine.judge_incorrect(
+                        audio_path=audio_path,
+                        reveal_audio_path=reveal_path or None,
+                    )
+                else:
+                    # Standalone press — just play the clip
+                    await state_machine.play_canned(audio_path=audio_path)
 
     elif cmd == "play_wandering":
         if "audio_path" in data:
