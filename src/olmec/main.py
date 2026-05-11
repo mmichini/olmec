@@ -12,6 +12,7 @@ from olmec.api.routes import router as api_router
 from olmec.api.ws import handle_ws_message, manager, setup_ws_events
 from olmec.audio.engine import audio_engine
 from olmec.config import settings
+from olmec.buttons import ButtonHandler
 from olmec.led.driver import create_led_driver
 from olmec.led.patterns import PatternRunner
 from olmec.questions.db import question_db
@@ -47,10 +48,16 @@ async def lifespan(app: FastAPI):
     app.state.led_driver = led_driver
     app.state.pattern_runner = PatternRunner(led_driver)
 
+    # Physical buttons
+    button_handler = ButtonHandler(app)
+    await button_handler.start()
+    app.state.button_handler = button_handler
+
     logger.info("Olmec is ready")
     yield
 
     # Shutdown
+    await button_handler.stop()
     await app.state.pattern_runner.stop()
     await stt_engine.stop()
     await state_machine.stop()

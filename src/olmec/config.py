@@ -36,6 +36,12 @@ class Settings(BaseSettings):
     audio_input_device: str = ""   # e.g. "USB" to match a USB mic
     audio_output_device: str = ""  # e.g. "USB" to match a USB speaker
 
+    # Physical button GPIO pins (Pi only; set to 0 to disable a button)
+    button_pin_next: int = 16        # pin 36
+    button_pin_correct: int = 26     # pin 37
+    button_pin_incorrect: int = 20   # pin 38
+    button_pin_wandering: int = 21   # pin 40
+
     # Server
     host: str = "0.0.0.0"
     port: int = 8000
