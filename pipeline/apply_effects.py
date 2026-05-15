@@ -97,7 +97,7 @@ def main():
     parser.add_argument("--damping", type=float, default=0.5, help="Reverb damping 0.0-1.0 (default: 0.5)")
     parser.add_argument("--wet-level", type=float, default=0.3, help="Reverb wet level 0.0-1.0 (default: 0.3)")
     parser.add_argument("--dry-level", type=float, default=0.8, help="Reverb dry level 0.0-1.0 (default: 0.8)")
-    parser.add_argument("--gain", type=float, default=3.0, help="Output gain in dB before limiter (default: 6.0)")
+    parser.add_argument("--gain", type=float, default=5.0, help="Output gain in dB before limiter (default: 6.0)")
     parser.add_argument("--limiter-threshold", type=float, default=-0.5, help="Limiter threshold dB (default: -0.5)")
     parser.add_argument("--highpass", type=float, default=0.0, help="Highpass cutoff Hz (0 = disabled, default: 0)")
     parser.add_argument("--regenerate-all", action="store_true", help="Overwrite existing processed files")
