@@ -29,13 +29,13 @@ from pedalboard import Pedalboard, Reverb, HighpassFilter, Gain, Limiter
 
 
 def build_olmec_board(
-    room_size: float = 0.7,
-    damping: float = 0.5,
-    wet_level: float = 0.3,
-    dry_level: float = 0.8,
-    gain_db: float = 10.0,
-    limiter_threshold_db: float = -0.5,
-    highpass_hz: float = 0.0,
+    room_size: float,
+    damping: float,
+    wet_level: float,
+    dry_level: float,
+    gain_db: float,
+    limiter_threshold_db: float,
+    highpass_hz: float,
 ) -> Pedalboard:
     """Build an effects chain for the Olmec voice — cavernous temple reverb.
 
@@ -50,6 +50,8 @@ def build_olmec_board(
     if highpass_hz > 0:
         plugins.append(HighpassFilter(cutoff_frequency_hz=highpass_hz))
     plugins.extend([
+        # Gain boost — pushes RMS up; peaks get clamped by limiter
+        Gain(gain_db=gain_db),
         Reverb(
             room_size=room_size,
             damping=damping,
@@ -57,8 +59,6 @@ def build_olmec_board(
             dry_level=dry_level,
             width=1.0,
         ),
-        # Gain boost — pushes RMS up; peaks get clamped by limiter
-        Gain(gain_db=gain_db),
         # Limiter catches any peaks that clip after the gain boost
         Limiter(threshold_db=limiter_threshold_db, release_ms=100.0),
     ])
@@ -97,7 +97,7 @@ def main():
     parser.add_argument("--damping", type=float, default=0.5, help="Reverb damping 0.0-1.0 (default: 0.5)")
     parser.add_argument("--wet-level", type=float, default=0.3, help="Reverb wet level 0.0-1.0 (default: 0.3)")
     parser.add_argument("--dry-level", type=float, default=0.8, help="Reverb dry level 0.0-1.0 (default: 0.8)")
-    parser.add_argument("--gain", type=float, default=12.0, help="Output gain in dB before limiter (default: 12.0)")
+    parser.add_argument("--gain", type=float, default=3.0, help="Output gain in dB before limiter (default: 6.0)")
     parser.add_argument("--limiter-threshold", type=float, default=-0.5, help="Limiter threshold dB (default: -0.5)")
     parser.add_argument("--highpass", type=float, default=0.0, help="Highpass cutoff Hz (0 = disabled, default: 0)")
     parser.add_argument("--regenerate-all", action="store_true", help="Overwrite existing processed files")
