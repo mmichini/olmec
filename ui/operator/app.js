@@ -87,8 +87,9 @@ function updateUI() {
     // Next question is always available — can interrupt
     document.getElementById('btn-next-question').disabled = false;
     document.getElementById('btn-repeat-question').disabled = !state.current_question_id;
-    document.getElementById('btn-correct').disabled = quizState !== 'listening' && quizState !== 'judging';
-    document.getElementById('btn-incorrect').disabled = quizState !== 'listening' && quizState !== 'judging';
+    // Correct/Incorrect always available — pre-empt any current audio
+    document.getElementById('btn-correct').disabled = false;
+    document.getElementById('btn-incorrect').disabled = false;
 
     // Clear question display when returning to idle
     if (quizState === 'idle') {

@@ -164,8 +164,9 @@ function updateOperatorUI() {
     document.getElementById('btn-next-question').disabled = false;
     // Repeat is enabled whenever there's a current question
     document.getElementById('btn-repeat-question').disabled = !state.current_question_id;
-    document.getElementById('btn-correct').disabled = quizState !== 'listening' && quizState !== 'judging';
-    document.getElementById('btn-incorrect').disabled = quizState !== 'listening' && quizState !== 'judging';
+    // Correct/Incorrect are always available — pre-empt any current audio
+    document.getElementById('btn-correct').disabled = false;
+    document.getElementById('btn-incorrect').disabled = false;
     document.getElementById('btn-listen').disabled = quizState !== 'listening' && quizState !== 'judging';
 
     if (quizState === 'idle') {
