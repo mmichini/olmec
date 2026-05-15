@@ -42,6 +42,14 @@ class Settings(BaseSettings):
     button_pin_incorrect: int = 20   # pin 38
     button_pin_wandering: int = 21   # pin 40
 
+    # LED brightness multiplier applied to amplitude (1.0 = direct, >1.0 = brighter)
+    # Speech amplitude is usually 0.2-0.5 after gamma, so 2.0 makes the eyes pop.
+    led_brightness_scale: float = 2.0
+
+    # Hardware brightness cap (0.0-1.0). Limits peak LED current — set lower if
+    # the buck converter struggles or you see flicker under load.
+    led_hardware_brightness: float = 1.0
+
     # Server
     host: str = "0.0.0.0"
     port: int = 8000

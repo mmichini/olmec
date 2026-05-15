@@ -25,7 +25,7 @@ from pathlib import Path
 
 import numpy as np
 import soundfile as sf
-from pedalboard import Pedalboard, Reverb, HighpassFilter, Gain
+from pedalboard import Pedalboard, Reverb, HighpassFilter, Gain, Limiter
 
 
 def build_olmec_board(
@@ -33,12 +33,23 @@ def build_olmec_board(
     damping: float = 0.5,
     wet_level: float = 0.3,
     dry_level: float = 0.8,
+    gain_db: float = 10.0,
+    limiter_threshold_db: float = -0.5,
+    highpass_hz: float = 0.0,
 ) -> Pedalboard:
-    """Build an effects chain for the Olmec voice — cavernous temple reverb."""
-    return Pedalboard([
-        # Slight high-pass to remove low rumble before reverb
-        HighpassFilter(cutoff_frequency_hz=80),
-        # Cavernous reverb
+    """Build an effects chain for the Olmec voice — cavernous temple reverb.
+
+    Limiter at the end clamps peaks so the gain boost actually translates to
+    a perceptually louder file (rather than getting cancelled by peak
+    normalization).
+
+    Set highpass_hz > 0 to remove low rumble below that frequency. Off by
+    default to preserve the deep bass of the Olmec voice.
+    """
+    plugins = []
+    if highpass_hz > 0:
+        plugins.append(HighpassFilter(cutoff_frequency_hz=highpass_hz))
+    plugins.extend([
         Reverb(
             room_size=room_size,
             damping=damping,
@@ -46,9 +57,12 @@ def build_olmec_board(
             dry_level=dry_level,
             width=1.0,
         ),
-        # Slight gain boost to compensate for wet mix
-        Gain(gain_db=2.0),
+        # Gain boost — pushes RMS up; peaks get clamped by limiter
+        Gain(gain_db=gain_db),
+        # Limiter catches any peaks that clip after the gain boost
+        Limiter(threshold_db=limiter_threshold_db, release_ms=100.0),
     ])
+    return Pedalboard(plugins)
 
 
 def process_file(board: Pedalboard, input_path: Path, output_path: Path) -> None:
@@ -66,10 +80,9 @@ def process_file(board: Pedalboard, input_path: Path, output_path: Path) -> None
     # Back to 1D
     processed = processed.squeeze()
 
-    # Normalize to prevent clipping
-    peak = np.max(np.abs(processed))
-    if peak > 0.95:
-        processed = processed * (0.95 / peak)
+    # Safety clip — the limiter should keep us under threshold but float math
+    # can occasionally push a sample fractionally over 1.0.
+    processed = np.clip(processed, -1.0, 1.0)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     sf.write(str(output_path), processed, sr, subtype="PCM_16")
@@ -84,6 +97,9 @@ def main():
     parser.add_argument("--damping", type=float, default=0.5, help="Reverb damping 0.0-1.0 (default: 0.5)")
     parser.add_argument("--wet-level", type=float, default=0.3, help="Reverb wet level 0.0-1.0 (default: 0.3)")
     parser.add_argument("--dry-level", type=float, default=0.8, help="Reverb dry level 0.0-1.0 (default: 0.8)")
+    parser.add_argument("--gain", type=float, default=12.0, help="Output gain in dB before limiter (default: 12.0)")
+    parser.add_argument("--limiter-threshold", type=float, default=-0.5, help="Limiter threshold dB (default: -0.5)")
+    parser.add_argument("--highpass", type=float, default=0.0, help="Highpass cutoff Hz (0 = disabled, default: 0)")
     parser.add_argument("--regenerate-all", action="store_true", help="Overwrite existing processed files")
     args = parser.parse_args()
 
@@ -104,11 +120,15 @@ def main():
         damping=args.damping,
         wet_level=args.wet_level,
         dry_level=args.dry_level,
+        gain_db=args.gain,
+        limiter_threshold_db=args.limiter_threshold,
+        highpass_hz=args.highpass,
     )
 
     print(f"Source:  {input_dir}")
     print(f"Output:  {output_dir}")
-    print(f"Effects: room={args.room_size} damping={args.damping} wet={args.wet_level} dry={args.dry_level}")
+    hp = f"hp={args.highpass}Hz" if args.highpass > 0 else "hp=off"
+    print(f"Effects: room={args.room_size} damping={args.damping} wet={args.wet_level} dry={args.dry_level} gain={args.gain}dB limiter={args.limiter_threshold}dB {hp}")
     print()
 
     # Find all wav files

@@ -26,9 +26,13 @@
   tags: [barker]
 
 - id: jello_shots
-  text: "Answer correctly, and the temple gods shall reward you with a jello shot!"
+  text: "Answer correctly, and the temple guards shall reward you with a jello shot!"
   tags: [barker, jello]
 
 - id: come_closer
   text: "Come closer, mortals. Olmec has a question for you."
   tags: [barker]
+
+- id: party_like_99_bc
+  text: "Let's party like it's ninety-nine... BC!"
+  tags: [barker, jello]

@@ -67,7 +67,8 @@ class LEDDriver(ABC):
     async def _on_amplitude(self, event: AmplitudeEvent) -> None:
         if self._test_mode:
             return
-        await self.set_brightness(event.rms)
+        scaled = min(1.0, event.rms * settings.led_brightness_scale)
+        await self.set_brightness(scaled)
 
     @property
     def is_test_mode(self) -> bool:
@@ -118,7 +119,6 @@ class NeoPixelLEDDriver(LEDDriver):
     NUM_PIXELS = 80
     EYE0_RANGE = range(0, 40)
     EYE1_RANGE = range(40, 80)
-    MAX_HARDWARE_BRIGHTNESS = 0.6  # safety cap to limit current draw
 
     def __init__(self):
         super().__init__()
@@ -134,7 +134,7 @@ class NeoPixelLEDDriver(LEDDriver):
                 spi,
                 self.NUM_PIXELS,
                 pixel_order=neopixel.GRB,
-                brightness=self.MAX_HARDWARE_BRIGHTNESS,
+                brightness=settings.led_hardware_brightness,
                 auto_write=False,
             )
             logger.info(f"NeoPixel SPI initialized ({self.NUM_PIXELS} LEDs)")
