@@ -60,9 +60,15 @@ async def setup_ws_events() -> None:
     """Subscribe to events and broadcast to WebSocket clients."""
 
     async def on_amplitude(event: AmplitudeEvent) -> None:
+        # LED level mirrors the formula in LEDDriver._on_amplitude
+        led_level = min(1.0, event.rms * settings.led_brightness_scale)
         await manager.broadcast({
             "type": "amplitude",
-            "data": {"rms": round(event.rms, 4), "peak": round(event.peak, 4)},
+            "data": {
+                "rms": round(event.rms, 4),
+                "peak": round(event.peak, 4),
+                "led": round(led_level, 4),
+            },
         })
 
     async def on_state_change(event: StateChangeEvent) -> None:

@@ -71,7 +71,8 @@ body.panel-open #olmec-view {
 .debug-row:last-child { margin-bottom: 0; }
 .label { color: #666; min-width: 100px; }
 
-#amplitude-bar {
+#amplitude-bar,
+#led-bar {
     flex: 1;
     height: 12px;
     background: #222;
@@ -82,8 +83,17 @@ body.panel-open #olmec-view {
 #amplitude-fill {
     height: 100%;
     width: 0%;
-    background: #ff4444;
+    background: #6699ff;
     border-radius: 6px;
+    transition: width 0.05s linear;
+}
+
+#led-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #aa2222, #ff4444, #ffaaaa);
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgba(255, 80, 30, 0.6);
     transition: width 0.05s linear;
 }
 

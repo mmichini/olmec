@@ -79,6 +79,12 @@ function handleMessage(msg) {
         document.getElementById('debug-amplitude').textContent = targetAmplitude.toFixed(4);
         document.getElementById('amplitude-fill').style.width = (targetAmplitude * 100) + '%';
 
+        // LED level from server (already scaled by led_brightness_scale)
+        if (msg.data.led !== undefined) {
+            document.getElementById('debug-led').textContent = msg.data.led.toFixed(4);
+            document.getElementById('led-fill').style.width = (msg.data.led * 100) + '%';
+        }
+
     } else if (msg.type === 'state') {
         state = msg.data;
         currentState = msg.data.display_state;
