@@ -19,15 +19,15 @@ correct:
     takes: 1
 
   - id: correct_jello_jiggle
-    text: "Correct, mortal! Take your jiggling prize!"
+    text: "Correct, mortal! A jello shot for you!"
     takes: 1
 
   - id: correct_jello_wisdom
-    text: "Yes! Wisdom is its own reward... but also jello!"
+    text: "Yes! Wisdom is its own reward... but also jello shots!"
     takes: 1
 
   - id: correct_jello_temple
-    text: "That is right! The temple rewards you with sweet, sweet gelatin!"
+    text: "That is right! The temple rewards you with a jello shot!"
     takes: 1
 
   - id: correct_jello_visions
@@ -47,4 +47,28 @@ correct_no_jello:
 
   - id: correct_no_jello_gods
     text: "Correct! The temple gods smile upon you!"
+    takes: 1
+
+  - id: correct_no_jello_wise
+    text: "Right you are! Wisdom flows through you, mortal."
+    takes: 1
+
+  - id: correct_no_jello_pendant
+    text: "Correct! You have earned the Pendant of Life!"
+    takes: 1
+
+  - id: correct_no_jello_brilliant
+    text: "Yes! A brilliant answer from a brilliant mind."
+    takes: 1
+
+  - id: correct_no_jello_impressed
+    text: "Correct! Olmec is impressed."
+    takes: 1
+
+  - id: correct_no_jello_chosen
+    text: "That is right! You are chosen by the temple."
+    takes: 1
+
+  - id: correct_no_jello_legends
+    text: "Yes! Your name shall be sung in the legends!"
     takes: 1

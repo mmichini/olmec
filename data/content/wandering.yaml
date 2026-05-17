@@ -77,3 +77,7 @@
 - id: pablo_escobar
   text: "I'm on the verge of caving in, I run back to the dark. Now I'm Mr. Charisma, fucking Pablo Escobar. My friends are saying, 'shut the fuck up, Kevin, just get in the car.'"
   tags: [observation]
+
+- id: party_dont_start
+  text: "The party don't start 'til. I. Walk. In."
+  tags: [observation]
