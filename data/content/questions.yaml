@@ -141,3 +141,10 @@
   accept: ["vikings", "the vikings", "norse", "norsemen"]
   category: history
   difficulty: 3
+
+- id: golden_gate_year
+  question_text: "In what year was the Golden Gate Bridge completed?"
+  answer: "1937"
+  accept: ["1937", "nineteen thirty seven", "thirty seven", "thirty-seven"]
+  category: history
+  difficulty: 3

@@ -36,3 +36,44 @@
 - id: party_like_99_bc
   text: "Let's party like it's ninety-nine... BC!"
   tags: [barker, jello]
+
+- id: past_the_panhandle
+  text: "Legends speak of brave warriors who make it past the panhandle. Few believe these tales."
+  tags: [barker]
+
+- id: nice_dick
+  text: "Nice dick!"
+  takes: 3
+  tags: [observation]
+
+- id: nice_dick_mortal
+  text: "Nice dick... for a mere mortal!"
+  tags: [observation]
+
+- id: born_naked
+  text: "We are all born naked, and the rest is drag."
+  tags: [observation]
+
+- id: better_work
+  text: "You better work."
+  tags: [observation]
+
+- id: dont_fuck_it_up
+  text: "Don't fuck it up."
+  tags: [observation]
+
+- id: sissy_that_walk
+  text: "Sissy that walk."
+  tags: [observation]
+
+- id: she_done_had_herses
+  text: "She done already done had herses."
+  tags: [observation]
+
+- id: coming_to_the_cottage
+  text: "I'm coming to the cottage."
+  tags: [observation]
+
+- id: pablo_escobar
+  text: "I'm on the verge of caving in, I run back to the dark. Now I'm Mr. Charisma, fucking Pablo Escobar. My friends are saying, 'shut the fuck up, Kevin, just get in the car.'"
+  tags: [observation]

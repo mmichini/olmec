@@ -10,6 +10,30 @@ correct:
     text: "Correct! Claim your jello shot, champion!"
     takes: 2
 
+  - id: correct_jello_slam
+    text: "Yes! Olmec demands you slam that jello shot!"
+    takes: 1
+
+  - id: correct_jello_legend
+    text: "Right! Now drink up, you absolute legend!"
+    takes: 1
+
+  - id: correct_jello_jiggle
+    text: "Correct, mortal! Take your jiggling prize!"
+    takes: 1
+
+  - id: correct_jello_wisdom
+    text: "Yes! Wisdom is its own reward... but also jello!"
+    takes: 1
+
+  - id: correct_jello_temple
+    text: "That is right! The temple rewards you with sweet, sweet gelatin!"
+    takes: 1
+
+  - id: correct_jello_visions
+    text: "Correct! May this jello shot bring you visions of the hidden temple!"
+    takes: 1
+
 incorrect:
   - id: incorrect_not_quite
     text: "I'm afraid that is not correct."
