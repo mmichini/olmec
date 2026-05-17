@@ -81,3 +81,11 @@
 - id: party_dont_start
   text: "The party don't start 'til. I. Walk. In."
   tags: [observation]
+
+- id: absolute_creamer
+  text: "Oo, that's an absolute creamer!"
+  tags: [observation]
+
+- id: temple_bar
+  text: "Let's walk to Temple Bar."
+  tags: [observation]
