@@ -72,3 +72,7 @@
 - id: temple_bar
   text: "Let's walk to Temple Bar."
   tags: [observation]
+
+- id: rock_god_gemfest
+  text: "I am the Rock God of Gemfest. All those who forsake paper and accept me as their one true God are welcome."
+  tags: [barker]
