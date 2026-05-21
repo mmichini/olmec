@@ -51,7 +51,7 @@ The Pi runs its own WiFi network ("Olmec") when away from home. Your phone or la
 
 **Default WiFi:**
 - SSID: `Olmec`
-- Password: `openolmec`
+- Password: `olmecolmec`
 
 Once connected, open:
 - **http://olmec.local:8000/olmec/** — main UI (Olmec face + slide-out operator panel)
