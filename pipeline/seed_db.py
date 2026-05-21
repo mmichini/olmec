@@ -100,6 +100,10 @@ def main():
     print(f"Seeding database: {DB_PATH}")
     print(f"Content dir: {CONTENT_DIR}\n")
 
+    # Delete the old DB so removed YAML entries don't linger
+    if DB_PATH.exists():
+        DB_PATH.unlink()
+
     db = QuestionDB(db_path=DB_PATH)
     db.open()
 
