@@ -72,3 +72,27 @@
 - id: love_to_sing
   text: "I love to sing. Know any good rock songs?"
   tags: [observation]
+
+- id: happy_fridays_eve
+  text: "Happy Friday's eve."
+  tags: [observation]
+
+- id: dance_floor
+  text: "Get your asses on the dance floor."
+  tags: [barker]
+
+- id: about_to_erupt
+  text: "Things are about to erupt."
+  tags: [barker]
+
+- id: sedimentary
+  text: "Sedimentary, my dear clouds."
+  tags: [observation]
+
+- id: tectonic_vibes
+  text: "The vibes are tectonic."
+  tags: [observation]
+
+- id: hands_up
+  text: "Put. Your. Hands. UP!"
+  tags: [barker]
