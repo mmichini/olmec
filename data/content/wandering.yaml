@@ -96,3 +96,7 @@
 - id: hands_up
   text: "Put. Your. Hands. UP!"
   tags: [barker]
+
+- id: queer_channel
+  text: "How do I get added to the secret 'Queer Channel'?"
+  tags: [observation]
