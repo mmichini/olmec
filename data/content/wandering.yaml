@@ -16,3 +16,19 @@
 - id: dab_bar
   text: "Is the dab bar open? Even rock gods like to get stoned."
   tags: [observation]
+
+- id: baby_rock_bag
+  text: "Nobody puts baby in a rock bag."
+  tags: [observation]
+
+- id: challenge_scissors
+  text: "You dare challenge me with scissors?"
+  tags: [barker]
+
+- id: hate_paper
+  text: "Noooooooo! I hate paper!"
+  tags: [observation]
+
+- id: one_two_three_shoot
+  text: "One, two, three, shoot!"
+  tags: [barker]
