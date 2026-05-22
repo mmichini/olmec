@@ -5,10 +5,6 @@
   text: "Oo, that's an absolute creamer!"
   tags: [observation]
 
-- id: rock_god_gemfest
-  text: "I am the Rock God of Gemfest. All those who forsake paper and accept me as their one true God are welcome."
-  tags: [barker]
-
 - id: rebs_birthday
   text: "Let's take a brief moment... and wish Rebs a rockin' birthday!"
   tags: [observation]
@@ -21,32 +17,12 @@
   text: "Nobody puts baby in a rock bag."
   tags: [observation]
 
-- id: challenge_scissors
-  text: "You dare challenge me with scissors?"
-  tags: [barker]
-
-- id: hate_paper
-  text: "Noooooooo! I hate paper!"
-  tags: [observation]
-
-- id: one_two_three_shoot
-  text: "One, two, three, shoot!"
-  tags: [barker]
-
 - id: buzz
   text: "Buzzzzzzzzz. Buzzzzzzzz."
   tags: [observation]
 
 - id: cosmic_honey
   text: "Welcome to Cosmic Honey. If you turn around, you will see my great grandfather, Mount Cosmic."
-  tags: [barker]
-
-- id: let_the_games_begin
-  text: "Let the games begin!"
-  tags: [barker]
-
-- id: rules_of_the_game
-  text: "The rules of this game are simple. On the count of three, extend your hand in a fist, and vanquish your opponent's two fingers."
   tags: [barker]
 
 - id: hello_tony
@@ -87,4 +63,12 @@
 
 - id: happy_friday
   text: "Happy Friday."
+  tags: [observation]
+
+- id: slumbered_10000_years
+  text: "I have slumbered ten thousand years below this orchard."
+  tags: [barker]
+
+- id: love_to_sing
+  text: "I love to sing. Know any good rock songs?"
   tags: [observation]

@@ -1,22 +1,50 @@
 # Olmec Canned Phrases / Soundboard
 # Iconic lines and misc clips the operator can trigger anytime.
 
-- id: the_choice_is_yours
-  text: "The choice is yours, and yours alone."
-  tags: [iconic]
-
-- id: lets_rock
-  text: "Let's rock! It's time for Legends of the Hidden Temple!"
-  tags: [iconic]
-
-- id: olmec_intro
-  text: "I am Olmec, guardian of the Hidden Temple. Who dares approach?"
-  tags: [intro]
-
 - id: good_luck
   text: "Good luck. You'll need it."
   tags: [iconic]
 
-- id: purple_parrots
-  text: "Are you a Purple Parrot, or a Blue Barracuda?"
-  tags: [iconic, teams]
+- id: rock_god_gemfest
+  text: "I am the Rock God of Gemfest. All those who forsake paper and accept me as their one true God are welcome."
+  tags: [barker]
+
+- id: challenge_scissors
+  text: "You dare challenge me with scissors?"
+  tags: [barker]
+
+- id: hate_paper
+  text: "Noooooooo! I hate paper!"
+  tags: [observation]
+
+- id: one_two_three_shoot
+  text: "One, two, three, shoot!"
+  tags: [barker]
+
+- id: let_the_games_begin
+  text: "Let the games begin!"
+  tags: [barker]
+
+- id: rules_of_the_game
+  text: "The rules of this game are simple. On the count of three, extend your hand in a fist, and vanquish your opponent's two fingers."
+  tags: [barker]
+
+- id: rock_johnson
+  text: "I need a champion with the strength of my favorite actor, Dwayne the Rock Johnson."
+  tags: [barker]
+
+- id: fear_nothing
+  text: "I fear nothing. Except an eight and a half by eleven."
+  tags: [observation]
+
+- id: destroyed_scissors
+  text: "I have destroyed hundreds of scissors in my day."
+  tags: [barker]
+
+- id: throw_your_hands
+  text: "Throw your hands, my fleshy friends."
+  tags: [barker]
+
+- id: declare_victor
+  text: "I declare you the victor, and my new champion."
+  tags: [barker]
