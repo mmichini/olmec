@@ -52,3 +52,15 @@
 - id: hello_tony
   text: "Hello Tony. I have a cousin named Stoney."
   tags: [observation]
+
+- id: dated_a_gem
+  text: "I dated a gem that looked just like that, back in college."
+  tags: [observation]
+
+- id: send_it
+  text: "Fucking. Send it."
+  tags: [observation]
+
+- id: ancient_dj
+  text: "In ancient times, my favorite DJ was called \"Two. Bee. Sea.\""
+  tags: [observation]
