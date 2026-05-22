@@ -64,3 +64,27 @@
 - id: ancient_dj
   text: "In ancient times, my favorite DJ was called \"Two. Bee. Sea.\""
   tags: [observation]
+
+- id: sticks_and_stones
+  text: "Schticks and Stones can't break my bones, the only thing that can hurt me is erosion."
+  tags: [observation]
+
+- id: drop_the_beat
+  text: "Drop. The. Motherfucking. Beat."
+  tags: [barker]
+
+- id: igneous_is_bliss
+  text: "You know the old saying—igneous is bliss."
+  tags: [observation]
+
+- id: boulderdash
+  text: "Boulderdash!"
+  tags: [observation]
+
+- id: take_care_of_yourself
+  text: "Thanks for taking care of yourself."
+  tags: [observation]
+
+- id: happy_friday
+  text: "Happy Friday."
+  tags: [observation]
