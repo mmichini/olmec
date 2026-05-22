@@ -1,78 +1,18 @@
 # Olmec Wandering/Barker Clips
 # Played while walking around to attract people.
 
-- id: step_right_up
-  text: "Step right up! Do you have what it takes to enter the Hidden Temple?"
-  tags: [barker]
-
-- id: do_you_dare
-  text: "Do you dare challenge Olmec, the all-knowing?"
-  tags: [barker]
-
-- id: nice_costume
-  text: "Nice costume! But can your brain match your style?"
-  tags: [observation]
-
-- id: the_temple_awaits
-  text: "The temple awaits those who are brave enough to answer!"
-  tags: [barker]
-
-- id: who_will_challenge
-  text: "Who among you will challenge the great Olmec?"
-  tags: [barker]
-
-- id: legends
-  text: "Legends of the Hidden Temple! Come test your knowledge!"
-  tags: [barker]
-
-- id: jello_shots
-  text: "Answer correctly, and the temple guards shall reward you with a jello shot!"
-  tags: [barker, jello]
-
-- id: come_closer
-  text: "Come closer, mortals. Olmec has a question for you."
-  tags: [barker]
-
-- id: party_like_99_bc
-  text: "Let's party like it's ninety-nine... BC!"
-  tags: [barker, jello]
-
-- id: past_the_panhandle
-  text: "Legends speak of brave warriors who make it past the panhandle. Few believe these tales."
-  tags: [barker]
-
-- id: born_naked
-  text: "We are all born naked, and the rest is drag."
-  tags: [observation]
-
-- id: better_work
-  text: "You better work."
-  tags: [observation]
-
-- id: sissy_that_walk
-  text: "Sissy that walk."
-  tags: [observation]
-
-- id: she_done_had_herses
-  text: "She done already done had herses."
-  tags: [observation]
-
-- id: coming_to_the_cottage
-  text: "I'm coming to the cottage."
-  tags: [observation]
-
-- id: party_dont_start
-  text: "The party don't start 'til. I. Walk. In."
-  tags: [observation]
-
 - id: absolute_creamer
   text: "Oo, that's an absolute creamer!"
-  tags: [observation]
-
-- id: temple_bar
-  text: "Let's walk to Temple Bar."
   tags: [observation]
 
 - id: rock_god_gemfest
   text: "I am the Rock God of Gemfest. All those who forsake paper and accept me as their one true God are welcome."
   tags: [barker]
+
+- id: rebs_birthday
+  text: "Let's take a brief moment... and wish Rebs a rockin' birthday!"
+  tags: [observation]
+
+- id: dab_bar
+  text: "Is the dab bar open? Even rock gods like to get stoned."
+  tags: [observation]
