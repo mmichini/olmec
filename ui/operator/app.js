@@ -211,11 +211,15 @@ async function loadAudioFiles() {
     }
 }
 
+const VISIBLE_WANDERING_CLIPS = ['absolute_creamer', 'rock_god_gemfest'];
+
 function populateClipGrids() {
     // Wandering clips
     const wanderingGrid = document.getElementById('wandering-clips');
     wanderingGrid.innerHTML = '';
-    (audioFiles.wandering || []).forEach(file => {
+    (audioFiles.wandering || [])
+        .filter(file => VISIBLE_WANDERING_CLIPS.includes(file.split('/').pop().replace('.wav', '')))
+        .forEach(file => {
         const btn = document.createElement('button');
         btn.className = 'clip-btn';
         const name = file.split('/').pop().replace('.wav', '').replace(/_/g, ' ');
