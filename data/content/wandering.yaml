@@ -100,3 +100,19 @@
 - id: queer_channel
   text: "How do I get added to the secret 'Queer Channel'?"
   tags: [observation]
+
+- id: lets_go
+  text: "Let's. Fucking. GOOOOOOOO!"
+  tags: [barker]
+
+- id: gemini_move
+  text: "That's a real gemini move."
+  tags: [observation]
+
+- id: bigger_drop
+  text: "We're going to need a MUCH BIGGER DROP."
+  tags: [barker]
+
+- id: slumbered_roosters
+  text: "I have slumbered ten thousand years below this orchard... that is until those damned roosters broke my slumber."
+  tags: [barker]

@@ -2,36 +2,28 @@
 # Correct and incorrect responses. These get multiple takes for variety.
 
 correct:
-  - id: correct_well_done
-    text: "That is correct!"
-    takes: 2
-
-  - id: correct_jello
-    text: "Correct! Claim your jello shot, champion!"
-    takes: 2
-
-  - id: correct_jello_slam
-    text: "Yes! Olmec demands you slam that jello shot!"
+  - id: correct_dab_bar
+    text: "That is correct. As a prize, you have earned one all expenses paid trip to the dab bar."
     takes: 1
 
-  - id: correct_jello_legend
-    text: "Right! Now drink up, you absolute legend!"
+  - id: correct_walnuts
+    text: "That is correct. You win all the walnuts you can eat."
     takes: 1
 
-  - id: correct_jello_jiggle
-    text: "Correct, mortal! A jello shot for you!"
+  - id: correct_you_rock
+    text: "Correct! You rock."
     takes: 1
 
-  - id: correct_jello_wisdom
-    text: "Yes! Wisdom is its own reward... but also jello shots!"
+  - id: correct_smell_cooking
+    text: "Correct. You indeed could smell what this rock is cooking."
     takes: 1
 
-  - id: correct_jello_temple
-    text: "That is right! The temple rewards you with a jello shot!"
+  - id: correct_buzzed_in
+    text: "You have buzzzzzzzed in with the correct answer."
     takes: 1
 
-  - id: correct_jello_visions
-    text: "Correct! May this jello shot bring you visions of the hidden temple!"
+  - id: correct_sweet_honey
+    text: "That answer was sweet as honey."
     takes: 1
 
 incorrect:
@@ -39,36 +31,5 @@ incorrect:
     text: "I'm afraid that is not correct."
     takes: 2
 
-# Correct responses when jello shots are unavailable
-correct_no_jello:
-  - id: correct_no_jello_worthy
-    text: "That is correct! You have proven yourself worthy!"
-    takes: 1
-
-  - id: correct_no_jello_gods
-    text: "Correct! The temple gods smile upon you!"
-    takes: 1
-
-  - id: correct_no_jello_wise
-    text: "Right you are! Wisdom flows through you, mortal."
-    takes: 1
-
-  - id: correct_no_jello_pendant
-    text: "Correct! You have earned the Pendant of Life!"
-    takes: 1
-
-  - id: correct_no_jello_brilliant
-    text: "Yes! A brilliant answer from a brilliant mind."
-    takes: 1
-
-  - id: correct_no_jello_impressed
-    text: "Correct! Olmec is impressed."
-    takes: 1
-
-  - id: correct_no_jello_chosen
-    text: "That is right! You are chosen by the temple."
-    takes: 1
-
-  - id: correct_no_jello_legends
-    text: "Yes! Your name shall be sung in the legends!"
-    takes: 1
+# No correct_no_jello section: when jello is off, the runtime falls back
+# to the 'correct' clips above (see api/ws.py judge_correct handler).
