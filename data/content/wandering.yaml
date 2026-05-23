@@ -116,3 +116,47 @@
 - id: slumbered_roosters
   text: "I have slumbered ten thousand years below this orchard... that is until those damned roosters broke my slumber."
   tags: [barker]
+
+- id: im_hard
+  text: "I don't know about you, but I'm hard."
+  tags: [observation]
+
+- id: got_stimmies
+  text: "Got stimmies?"
+  tags: [observation]
+
+- id: lets_party
+  text: "Let's party!"
+  tags: [barker]
+
+- id: get_your_rocks_off
+  text: "Get your rocks off."
+  tags: [observation]
+
+- id: five_six_seven_eight
+  text: "Five! Six! Seven! Eight!"
+  tags: [barker]
+
+- id: meow
+  text: "Meowwwwww."
+  tags: [observation]
+
+- id: play_party
+  text: "Do you know where the play party is?"
+  tags: [observation]
+
+- id: lets_crag
+  text: "Hey baby, let's crag."
+  tags: [observation]
+
+- id: bury_my_friends
+  text: "Why did you bury all of my friends?"
+  tags: [observation]
+
+- id: play_some_stones
+  text: "Can you play some stones?"
+  tags: [observation]
+
+- id: rock_a_doodle
+  text: "Rock-a-doodle-dooooo!"
+  tags: [barker]
